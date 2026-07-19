@@ -45,6 +45,8 @@ public class AddTaskActivity extends AppCompatActivity {
         }
         toolbar.setNavigationOnClickListener(v -> finish());
 
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+
         edtTaskName = findViewById(R.id.edtTaskName);
         edtDescription = findViewById(R.id.edtDescription);
         btnDeadline = findViewById(R.id.btnDeadline);
