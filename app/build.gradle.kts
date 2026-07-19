@@ -8,6 +8,9 @@ android {
         version = release(36) {
             minorApiLevel = 1
         }
+        buildFeatures {
+            viewBinding = true
+        }
     }
 
     defaultConfig {
@@ -27,6 +30,9 @@ android {
             }
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -41,4 +47,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
 }
