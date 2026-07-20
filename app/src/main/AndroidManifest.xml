@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Quan_ly_du_an">
         <activity
-            android:name=".MainActivity"
+            android:name=".CommentActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

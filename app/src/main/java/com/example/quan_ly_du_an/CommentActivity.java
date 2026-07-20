@@ -20,7 +20,7 @@ import com.example.quan_ly_du_an.ui.CommentAdapter;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class CommentActivity extends AppCompatActivity {
     private AppDatabase db;
     private CommentAdapter adapter;
 
