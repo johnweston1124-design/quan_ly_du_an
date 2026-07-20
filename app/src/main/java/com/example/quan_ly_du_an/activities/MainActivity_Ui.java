@@ -1,4 +1,4 @@
-package com.example.quan_ly_du_an;
+package com.example.quan_ly_du_an.activities;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
