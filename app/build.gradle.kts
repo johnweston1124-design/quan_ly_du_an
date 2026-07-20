@@ -34,11 +34,13 @@ android {
 }
 
 dependencies {
-    implementation(libs.activity.ktx)
-    implementation(libs.appcompat)
-    implementation(libs.constraintlayout)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.ext.junit)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    val work_version = "2.9.0"
+    implementation("androidx.work:work-runtime:$work_version")
 }
