@@ -4,7 +4,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.quan_ly_du_an.feature_project.ui.home.HomeFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity_Ui extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
