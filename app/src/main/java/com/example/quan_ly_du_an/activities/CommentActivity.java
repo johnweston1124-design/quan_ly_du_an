@@ -1,4 +1,4 @@
-package com.example.quan_ly_du_an;
+package com.example.quan_ly_du_an.activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +13,8 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import java.util.concurrent.TimeUnit;
+
+import com.example.quan_ly_du_an.R;
 import com.example.quan_ly_du_an.worker.DeadlineWorker;
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.database.Comment;
