@@ -25,7 +25,6 @@ public class AddTaskActivity extends AppCompatActivity {
     private ChipGroup chipGroupStatus;
 
     private String deadline = "";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
