@@ -1,6 +1,7 @@
 package com.example.quan_ly_du_an.activities;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -70,6 +71,11 @@ public class TaskDetailActivity extends AppCompatActivity {
         btnDeadline.setOnClickListener(v -> showDatePicker());
         btnUpdate.setOnClickListener(v -> updateTask());
         btnDelete.setOnClickListener(v -> deleteTask());
+        findViewById(R.id.btnComments).setOnClickListener(v -> {
+            Intent intent = new Intent(this, CommentActivity.class);
+            intent.putExtra("taskId", taskId);
+            startActivity(intent);
+        });
     }
 
     private void loadDemoData() {

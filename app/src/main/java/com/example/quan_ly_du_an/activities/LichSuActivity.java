@@ -1,22 +1,26 @@
 package com.example.quan_ly_du_an.activities;
 
 import android.os.Bundle;
-import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.quan_ly_du_an.R;
+import com.example.quan_ly_du_an.databinding.ActivityLichSuBinding;
 
 public class LichSuActivity extends AppCompatActivity {
+
+    private ActivityLichSuBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lich_su);
+        binding = ActivityLichSuBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Xử lý nút quay lại
-        Button btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
+        binding.btnBack.setOnClickListener(v -> finish());
+        
+        // Bạn có thể thiết lập Toolbar nếu muốn
+        setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
     }
 }

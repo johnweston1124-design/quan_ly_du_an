@@ -1,70 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".activities.AddTaskActivity">
 
+    <!-- Thanh Toolbar hiện đại thụt xuống -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:titleTextColor="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="wrap_content"
+        android:paddingTop="48dp"
+        android:paddingBottom="12dp"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        app:contentInsetStart="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
+
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_arrow_back"
-                android:contentDescription="Back"
-                app:tint="@android:color/white"/>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="#000000"
+                android:contentDescription="Quay lại" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Thêm công việc"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginStart="8dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="12dp"
+                android:background="@drawable/rounded_search_bg"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thêm công việc"
+                    android:textColor="#757575"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_btn_speak_now"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="#000000"
+                android:contentDescription="Action" />
         </LinearLayout>
-
     </com.google.android.material.appbar.MaterialToolbar>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+
     <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Tên công việc -->
+            android:padding="20dp">
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tên công việc">
+                android:hint="Tên công việc"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTaskName"
@@ -73,13 +98,16 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Mô tả -->
-
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Mô tả">
+                android:hint="Mô tả chi tiết"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtDescription"
@@ -90,35 +118,37 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Deadline -->
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Deadline"
-                android:textStyle="bold"/>
+                android:layout_marginTop="24dp"
+                android:text="Thời hạn (Deadline)"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeadline"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Chọn ngày"
-                app:icon="@android:drawable/ic_menu_today"/>
-
-            <!-- Priority -->
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:text="Chọn ngày hoàn thành"
+                app:icon="@android:drawable/ic_menu_today"
+                app:cornerRadius="12dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
                 android:text="Độ ưu tiên"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="#333333"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupPriority"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 app:singleSelection="true">
 
                 <com.google.android.material.chip.Chip
@@ -144,19 +174,19 @@
 
             </com.google.android.material.chip.ChipGroup>
 
-            <!-- Status -->
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
                 android:text="Trạng thái"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:textColor="#333333"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 app:singleSelection="true">
 
                 <com.google.android.material.chip.Chip
@@ -182,14 +212,15 @@
 
             </com.google.android.material.chip.ChipGroup>
 
-            <!-- Save -->
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="Lưu công việc"/>
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:text="LƯU CÔNG VIỆC"
+                android:textStyle="bold"
+                app:cornerRadius="16dp"
+                android:backgroundTint="#FF4B63"/>
 
         </LinearLayout>
 
