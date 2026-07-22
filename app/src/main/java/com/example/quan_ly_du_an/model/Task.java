@@ -1,18 +1,20 @@
 package com.example.quan_ly_du_an.model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "tasks")
 public class Task {
 
+    @PrimaryKey(autoGenerate = true)
     private int taskId;
     private int projectId;
     private int assignedUserId;
 
     private String title;
     private String description;
-
     private String priority;
-
     private String status;
-
     private String deadline;
 
     public Task() {

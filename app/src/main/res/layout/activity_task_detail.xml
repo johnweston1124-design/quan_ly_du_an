@@ -1,182 +1,191 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:layout_height="match_parent">
 
-    <!-- Thanh Toolbar hiện đại thụt xuống -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="32dp"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back"
+                app:tint="@android:color/white"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chi tiết công việc"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"/>
+
+        </LinearLayout>
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tên công việc"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp">
+                android:hint="Tên công việc">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTaskName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Mô tả"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusTopStart="12dp">
+                android:hint="Mô tả">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtDescription"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:gravity="top"
-                    android:inputType="textMultiLine" />
+                    android:inputType="textMultiLine"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Thời hạn"
-                android:textStyle="bold" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeadline"
-                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:text="Deadline"
-                app:cornerRadius="12dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Deadline"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:text="Độ ưu tiên"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupPriority"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:singleSelection="true">
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipHigh"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cao" />
+                    android:checkable="true"
+                    android:text="Cao"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipMedium"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Trung bình" />
+                    android:checkable="true"
+                    android:text="Trung bình"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipLow"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thấp" />
+                    android:checkable="true"
+                    android:text="Thấp"/>
 
             </com.google.android.material.chip.ChipGroup>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="Trạng thái"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:singleSelection="true">
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipTodo"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="To Do" />
+                    android:checkable="true"
+                    android:text="To Do"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDoing"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="In Progress" />
+                    android:checkable="true"
+                    android:text="Đang làm"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDone"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Done" />
+                    android:checkable="true"
+                    android:text="Hoàn thành"/>
 
             </com.google.android.material.chip.ChipGroup>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnComments"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
-                android:text="Xem bình luận"
-                app:cornerRadius="12dp"
-                app:icon="@android:drawable/stat_notify_chat" />
-
-            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUpdate"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="#FF4B63"
-                android:text="CẬP NHẬT"
-                android:textStyle="bold"
-                app:cornerRadius="16dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Cập nhật"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="XÓA CÔNG VIỆC"
-                android:textColor="#FF4B63"
-                app:cornerRadius="16dp"
-                app:strokeColor="#FF4B63" />
+                android:text="Xóa"/>
 
         </LinearLayout>
 

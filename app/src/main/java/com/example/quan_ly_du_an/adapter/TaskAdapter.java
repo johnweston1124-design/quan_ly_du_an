@@ -14,7 +14,6 @@ import com.google.android.material.chip.Chip;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
@@ -24,6 +23,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private String currentSearchText = "";
     private String currentStatusFilter = "Tất cả";
+    private String currentPriorityFilter = "Tất cả ưu tiên";
 
     public interface OnTaskClickListener {
         void onTaskClick(Task task);
@@ -42,6 +42,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 .inflate(R.layout.item_task, parent, false);
         return new TaskViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = taskList.get(position);
@@ -79,6 +80,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         applyFilter();
     }
 
+    public void filterByPriority(String priority) {
+        this.currentPriorityFilter = priority;
+        applyFilter();
+    }
+
     private void applyFilter() {
         taskList.clear();
         for (Task task : taskListFull) {
@@ -87,8 +93,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             
             boolean matchesStatus = currentStatusFilter.equals("Tất cả") 
                     || task.getStatus().equalsIgnoreCase(currentStatusFilter);
+            
+            boolean matchesPriority = currentPriorityFilter.equals("Tất cả ưu tiên")
+                    || task.getPriority().equalsIgnoreCase(currentPriorityFilter);
 
-            if (matchesSearch && matchesStatus) {
+            if (matchesSearch && matchesStatus && matchesPriority) {
                 taskList.add(task);
             }
         }
@@ -96,6 +105,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     private void setPriorityColor(Chip chip, String priority) {
+        if (priority == null) return;
         switch (priority) {
             case "Cao":
                 chip.setChipBackgroundColorResource(R.color.red);
@@ -110,6 +120,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     private void setStatusColor(Chip chip, String status) {
+        if (status == null) return;
         switch (status) {
             case "To Do":
                 chip.setChipBackgroundColorResource(R.color.gray);

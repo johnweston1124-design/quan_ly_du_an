@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Tiêu đề -->
         <TextView
             android:id="@+id/txtTaskTitle"
             android:layout_width="0dp"
@@ -29,7 +28,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Mô tả -->
         <TextView
             android:id="@+id/txtDescription"
             android:layout_width="0dp"
@@ -44,7 +42,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Icon Deadline -->
         <ImageView
             android:id="@+id/imgDeadline"
             android:layout_width="18dp"
@@ -55,7 +52,6 @@
             app:layout_constraintTop_toBottomOf="@id/txtDescription"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Deadline -->
         <TextView
             android:id="@+id/txtDeadline"
             android:layout_width="wrap_content"
@@ -67,7 +63,6 @@
             app:layout_constraintStart_toEndOf="@id/imgDeadline"
             app:layout_constraintTop_toTopOf="@id/imgDeadline"/>
 
-        <!-- Icon User -->
         <ImageView
             android:id="@+id/imgUser"
             android:layout_width="18dp"
@@ -78,7 +73,6 @@
             app:layout_constraintStart_toEndOf="@id/txtDeadline"
             app:layout_constraintTop_toTopOf="@id/imgDeadline"/>
 
-        <!-- Người thực hiện -->
         <TextView
             android:id="@+id/txtUser"
             android:layout_width="wrap_content"
@@ -90,7 +84,6 @@
             app:layout_constraintStart_toEndOf="@id/imgUser"
             app:layout_constraintTop_toTopOf="@id/imgUser"/>
 
-        <!-- Priority -->
         <com.google.android.material.chip.Chip
             android:id="@+id/chipPriority"
             android:layout_width="wrap_content"
@@ -102,7 +95,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp"/>
 
-        <!-- Status -->
         <com.google.android.material.chip.Chip
             android:id="@+id/chipStatus"
             android:layout_width="wrap_content"
