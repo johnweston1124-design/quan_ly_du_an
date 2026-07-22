@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.model.User;
 import com.example.quan_ly_du_an.databinding.ActivityLoginBinding;
+
+// Nhớ Import MainActivity từ đúng package nếu MainActivity nằm ở package khác
+import com.example.quan_ly_du_an.activities.MainActivity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,68 +37,67 @@ public class LoginActivity extends AppCompatActivity {
         if (isLoggedIn) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
+            return;
         }
 
         binding.btnLogin.setOnClickListener(v -> handleLogin());
+
+        binding.tvRegister.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        });
+
+        binding.btnGoogle.setOnClickListener(v -> {
+            Toast.makeText(this, "Tính năng đăng nhập Google đang phát triển", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.btnFacebook.setOnClickListener(v -> {
+            Toast.makeText(this, "Tính năng đăng nhập Facebook đang phát triển", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void handleLogin() {
-        String email = "";
-        if (binding.etEmail != null && binding.etEmail.getText() != null) {
-            email = binding.etEmail.getText().toString().trim();
-        }
+        String email = binding.etEmail.getText() != null ? binding.etEmail.getText().toString().trim() : "";
+        String password = binding.etPassword.getText() != null ? binding.etPassword.getText().toString().trim() : "";
 
-        String password = "";
-        if (binding.etPassword != null && binding.etPassword.getText() != null) {
-            password = binding.etPassword.getText().toString().trim();
-        }
-
-        if (binding.tilEmail != null) binding.tilEmail.setError(null);
-        if (binding.tilPassword != null) binding.tilPassword.setError(null);
+        binding.tilEmail.setError(null);
+        binding.tilPassword.setError(null);
 
         if (email.isEmpty()) {
-            if (binding.tilEmail != null) binding.tilEmail.setError("Vui lòng nhập email");
+            binding.tilEmail.setError("Vui lòng nhập email");
             return;
         }
         if (password.isEmpty()) {
-            if (binding.tilPassword != null) binding.tilPassword.setError("Vui lòng nhập mật khẩu");
+            binding.tilPassword.setError("Vui lòng nhập mật khẩu");
             return;
         }
 
-        final String finalEmail = email;
-        final String finalPassword = password;
-
-        if (finalEmail.equals("admin") && finalPassword.equals("123456")) {
-            SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean("IS_LOGGED_IN", true);
-            editor.putInt("USER_ID", 999);
-            editor.apply();
-
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
+        if (email.equals("admin") && password.equals("123456")) {
+            saveSessionAndNavigate(999);
             return;
         }
 
         executorService.execute(() -> {
-            User user = database.userDao().login(finalEmail, finalPassword);
+            User user = database.userDao().login(email, password);
 
             runOnUiThread(() -> {
                 if (user != null) {
-                    SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putBoolean("IS_LOGGED_IN", true);
-                    editor.putInt("USER_ID", user.getId());
-                    editor.apply();
-
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
+                    saveSessionAndNavigate(user.getId());
                 } else {
-                    if (binding.tilPassword != null) {
-                        binding.tilPassword.setError("Sai email hoặc mật khẩu!");
-                    }
+                    binding.tilPassword.setError("Sai email hoặc mật khẩu!");
                 }
             });
         });
+    }
+
+    private void saveSessionAndNavigate(int userId) {
+        SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("IS_LOGGED_IN", true);
+        editor.putInt("USER_ID", userId);
+        editor.apply();
+
+        Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        finish();
     }
 }
