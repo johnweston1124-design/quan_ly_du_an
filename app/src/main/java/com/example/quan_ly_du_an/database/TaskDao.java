@@ -1,0 +1,34 @@
+package com.example.quan_ly_du_an.database;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
+
+import com.example.quan_ly_du_an.model.Task;
+
+import java.util.List;
+
+@Dao
+public interface TaskDao {
+
+    @Insert
+    void insert(Task task);
+
+    @Update
+    void update(Task task);
+
+    @Delete
+    void delete(Task task);
+
+    @Query("SELECT * FROM tasks ORDER BY taskId DESC")
+    LiveData<List<Task>> getAllTasks();
+
+    @Query("SELECT * FROM tasks WHERE taskId = :taskId LIMIT 1")
+    Task getTaskById(int taskId);
+
+    @Query("SELECT * FROM tasks WHERE title LIKE :query OR description LIKE :query")
+    LiveData<List<Task>> searchTasks(String query);
+}

@@ -9,7 +9,8 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:paddingTop="32dp"
         android:background="?attr/colorPrimary"
         app:titleTextColor="@android:color/white"
         app:layout_constraintTop_toTopOf="parent"
@@ -102,24 +103,31 @@
                 android:id="@+id/chipGroupPriority"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:singleSelection="true">
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipHigh"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checkable="true"
                     android:text="Cao"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipMedium"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checkable="true"
                     android:text="Trung bình"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipLow"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checkable="true"
                     android:text="Thấp"/>
 
             </com.google.android.material.chip.ChipGroup>
@@ -135,25 +143,32 @@
                 android:id="@+id/chipGroupStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:singleSelection="true">
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipTodo"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checkable="true"
                     android:text="To Do"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDoing"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="In Progress"/>
+                    android:checkable="true"
+                    android:text="Đang làm"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDone"
+                    style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Done"/>
+                    android:checkable="true"
+                    android:text="Hoàn thành"/>
 
             </com.google.android.material.chip.ChipGroup>
 

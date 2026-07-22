@@ -2,20 +2,22 @@ package com.example.quan_ly_du_an.activities;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quan_ly_du_an.R;
-import com.google.android.material.appbar.MaterialToolbar;
+import com.example.quan_ly_du_an.database.AppDatabase;
+import com.example.quan_ly_du_an.model.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TaskDetailActivity extends AppCompatActivity {
 
@@ -29,27 +31,26 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     private String deadline = "";
     private int taskId;
+    private Task currentTask;
+    private AppDatabase db;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+
+        db = AppDatabase.getDatabase(this);
         initView();
         getIntentData();
         setupEvent();
-        loadDemoData();
+        loadTaskData();
     }
 
     private void initView() {
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Chi tiết công việc");
-        
-        ImageView btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                Log.d("TaskDetail", "Back button clicked");
-                finish();
-            });
+        View backBtn = findViewById(R.id.btnBack);
+        if (backBtn != null) {
+            backBtn.setOnClickListener(v -> finish());
         }
 
         edtTaskName = findViewById(R.id.edtTaskName);
@@ -71,17 +72,36 @@ public class TaskDetailActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(v -> deleteTask());
     }
 
-    private void loadDemoData() {
-        edtTaskName.setText("Thiết kế Login");
-        edtDescription.setText("Thiết kế giao diện đăng nhập");
-        deadline = "20/07/2026";
-        btnDeadline.setText(deadline);
-        
-        Chip chipHigh = findViewById(R.id.chipHigh);
-        if (chipHigh != null) chipHigh.setChecked(true);
-        
-        Chip chipDoing = findViewById(R.id.chipDoing);
-        if (chipDoing != null) chipDoing.setChecked(true);
+    private void loadTaskData() {
+        if (taskId == -1) return;
+
+        executorService.execute(() -> {
+            currentTask = db.taskDao().getTaskById(taskId);
+            if (currentTask != null) {
+                runOnUiThread(() -> {
+                    edtTaskName.setText(currentTask.getTitle());
+                    edtDescription.setText(currentTask.getDescription());
+                    deadline = currentTask.getDeadline();
+                    btnDeadline.setText(deadline);
+                    selectChipByText(chipGroupPriority, currentTask.getPriority());
+                    selectChipByText(chipGroupStatus, currentTask.getStatus());
+                });
+            }
+        });
+    }
+
+    private void selectChipByText(ChipGroup group, String text) {
+        if (group == null || text == null) return;
+        for (int i = 0; i < group.getChildCount(); i++) {
+            View child = group.getChildAt(i);
+            if (child instanceof Chip) {
+                Chip chip = (Chip) child;
+                if (chip.getText().toString().equalsIgnoreCase(text)) {
+                    chip.setChecked(true);
+                    return;
+                }
+            }
+        }
     }
 
     private void showDatePicker() {
@@ -100,12 +120,54 @@ public class TaskDetailActivity extends AppCompatActivity {
     }
 
     private void updateTask() {
-        Toast.makeText(this, "Đã cập nhật công việc", Toast.LENGTH_SHORT).show();
-        finish();
+        if (currentTask == null) return;
+
+        String title = edtTaskName.getText() != null ? edtTaskName.getText().toString().trim() : "";
+        String description = edtDescription.getText() != null ? edtDescription.getText().toString().trim() : "";
+
+        if (title.isEmpty()) {
+            edtTaskName.setError("Nhập tên công việc");
+            return;
+        }
+
+        currentTask.setTitle(title);
+        currentTask.setDescription(description);
+        currentTask.setDeadline(deadline);
+
+        int checkedPriorityId = chipGroupPriority.getCheckedChipId();
+        if (checkedPriorityId != View.NO_ID) {
+            currentTask.setPriority(((Chip) findViewById(checkedPriorityId)).getText().toString());
+        }
+
+        int checkedStatusId = chipGroupStatus.getCheckedChipId();
+        if (checkedStatusId != View.NO_ID) {
+            currentTask.setStatus(((Chip) findViewById(checkedStatusId)).getText().toString());
+        }
+
+        executorService.execute(() -> {
+            db.taskDao().update(currentTask);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Đã cập nhật công việc", Toast.LENGTH_SHORT).show();
+                finish();
+            });
+        });
     }
 
     private void deleteTask() {
-        Toast.makeText(this, "Đã xóa công việc", Toast.LENGTH_SHORT).show();
-        finish();
+        if (currentTask == null) return;
+
+        executorService.execute(() -> {
+            db.taskDao().delete(currentTask);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Đã xóa công việc", Toast.LENGTH_SHORT).show();
+                finish();
+            });
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
     }
 }
