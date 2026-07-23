@@ -20,30 +20,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. KIỂM TRA BẢO MẬT: Bắt buộc đăng nhập trước khi vào Trang chủ
-        SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
-        boolean isLoggedIn = sharedPref.getBoolean("IS_LOGGED_IN", false);
-        int currentUserId = sharedPref.getInt("USER_ID", -1);
-
-        // Nếu chưa đăng nhập hoặc không tìm thấy USER_ID, ép chuyển về LoginActivity ngay lập tức
-        if (!isLoggedIn || currentUserId == -1) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish(); // Đóng MainActivity lại
-            return;
-        }
-
-        // 2. Nếu đã đăng nhập thành công thì mới bơm Giao diện (Layout)
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Nút Đăng xuất
         Button btnLogout = findViewById(R.id.btnLogout);
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> handleLogout());
         }
 
-        // Mở Thông tin cá nhân
         View btnThongTin = findViewById(R.id.btnThongTinCaNhan);
         if (btnThongTin != null) {
             btnThongTin.setOnClickListener(v -> {
@@ -52,8 +36,20 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Mở Lịch sử
-        View btnLichSu = findViewById(R.id.btnLichSu);
+        View btnMucTieu = findViewById(R.id.btnLichSu);
+        if (btnMucTieu != null) {
+            btnMucTieu.setOnClickListener(v -> {
+                Toast.makeText(MainActivity.this, "Mở màn hình Chỉnh sửa mục tiêu", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        View btnThongBao = findViewById(R.id.btnCaiDatThongBao);
+        if (btnThongBao != null) {
+            btnThongBao.setOnClickListener(v -> {
+                Toast.makeText(MainActivity.this, "Mở màn hình Cài đặt thông báo", Toast.LENGTH_SHORT).show();
+            });
+        }
+        View btnLichSu = findViewById(R.id.btnLichSu); // Kiểm tra lại đúng ID nút Lịch sử trong XML của bạn
         if (btnLichSu != null) {
             btnLichSu.setOnClickListener(v -> {
                 Intent intent = new Intent(MainActivity.this, LichSuActivity.class);
@@ -61,15 +57,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Mở Cài đặt thông báo
-        View btnThongBao = findViewById(R.id.btnCaiDatThongBao);
-        if (btnThongBao != null) {
-            btnThongBao.setOnClickListener(v -> {
-                Toast.makeText(MainActivity.this, "Mở màn hình Cài đặt thông báo", Toast.LENGTH_SHORT).show();
-            });
-        }
-
-        // Điều hướng Bottom Navigation (Tổng quan & Cá nhân)
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
@@ -88,14 +75,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleLogout() {
-        // Xóa thông tin lưu trong SharedPreferences khi đăng xuất
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
         editor.clear();
         editor.apply();
 
-        // Chuyển về màn hình Login
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
     }

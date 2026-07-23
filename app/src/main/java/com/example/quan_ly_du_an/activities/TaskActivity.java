@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TaskActivity extends AppCompatActivity
+public class
+TaskActivity extends AppCompatActivity
         implements TaskAdapter.OnTaskClickListener {
 
     private RecyclerView rvTask;
