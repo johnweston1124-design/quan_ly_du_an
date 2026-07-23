@@ -42,6 +42,18 @@
             android:name=".activities.LichSuActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activities.TaskActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.AddTaskActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.TaskDetailActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

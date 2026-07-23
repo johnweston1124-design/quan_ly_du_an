@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".activities.AddTaskActivity">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -63,9 +64,15 @@
             <!-- Tên công việc -->
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tên công việc">
+                android:hint="Tên công việc"
+                app:boxBackgroundColor="@color/white"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTaskName"
@@ -77,10 +84,16 @@
             <!-- Mô tả -->
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Mô tả">
+                android:hint="Mô tả"
+                app:boxBackgroundColor="@color/white"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtDescription"
@@ -98,13 +111,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Deadline"
+                android:textColor="#212121"
                 android:textStyle="bold"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeadline"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
                 android:text="Chọn ngày"
+                app:cornerRadius="12dp"
                 app:icon="@android:drawable/ic_menu_today"/>
 
             <!-- Priority -->
@@ -114,6 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Độ ưu tiên"
+                android:textColor="#212121"
                 android:textStyle="bold"/>
 
             <com.google.android.material.chip.ChipGroup
@@ -157,6 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Trạng thái"
+                android:textColor="#212121"
                 android:textStyle="bold"/>
 
             <com.google.android.material.chip.ChipGroup
@@ -198,9 +217,13 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_marginTop="32dp"
-                android:text="Lưu công việc"/>
+                android:text="Lưu công việc"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                app:elevation="2dp" />
 
         </LinearLayout>
 

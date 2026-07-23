@@ -7,4 +7,8 @@
     <color name="green">#43A047</color>
     <color name="blue">#1E88E5</color>
     <color name="gray">#9E9E9E</color>
+    <color name="profile_bg">#F5F6FA</color>
+    <color name="logout_btn_bg">#FFEBEF</color>
+    <color name="logout_text">#FF4B63</color>
+    <color name="text_gray">#8E8E93</color>
 </resources>
