@@ -145,112 +145,6 @@ public class HomeFragment extends BaseFragment {
         new Handler(Looper.getMainLooper()).postDelayed(toast::cancel, Constants.TOAST_DURATION_MS);
     }
 
-    private static class ProjectInputFields {
-        EditText edtMembers;
-        EditText edtStatus;
-        EditText edtStart;
-        EditText edtEnd;
-    }
-
-    private ProjectInputFields injectCustomProjectFields(LinearLayout rootContainer) {
-        ProjectInputFields fields = new ProjectInputFields();
-
-        com.google.android.material.textfield.TextInputLayout layoutMembers = new com.google.android.material.textfield.TextInputLayout(requireContext(), null, com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox);
-        layoutMembers.setHint("Số lượng thành viên dự kiến");
-        LinearLayout.LayoutParams membersParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        membersParams.topMargin = dpToPx(requireContext(), 12);
-        layoutMembers.setLayoutParams(membersParams);
-        
-        com.google.android.material.textfield.TextInputEditText edtMembers = new com.google.android.material.textfield.TextInputEditText(layoutMembers.getContext());
-        edtMembers.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-        edtMembers.setText("5");
-        layoutMembers.addView(edtMembers);
-        rootContainer.addView(layoutMembers, 3);
-        fields.edtMembers = edtMembers;
-
-        com.google.android.material.textfield.TextInputLayout layoutStatus = new com.google.android.material.textfield.TextInputLayout(requireContext(), null, com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox);
-        layoutStatus.setHint("Trạng thái ban đầu");
-        LinearLayout.LayoutParams statusParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        statusParams.topMargin = dpToPx(requireContext(), 12);
-        layoutStatus.setLayoutParams(statusParams);
-        
-        com.google.android.material.textfield.TextInputEditText edtStatus = new com.google.android.material.textfield.TextInputEditText(layoutStatus.getContext());
-        edtStatus.setFocusable(false);
-        edtStatus.setClickable(true);
-        edtStatus.setText("Đang thực hiện");
-        edtStatus.setOnClickListener(v -> {
-            String[] statuses = {"Kế hoạch", "Đang thực hiện", "Hoàn thành"};
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Chọn trạng thái")
-                    .setItems(statuses, (dialog, which) -> {
-                        edtStatus.setText(statuses[which]);
-                    })
-                    .show();
-        });
-        layoutStatus.addView(edtStatus);
-        rootContainer.addView(layoutStatus, 4);
-        fields.edtStatus = edtStatus;
-
-        LinearLayout dateContainer = new LinearLayout(requireContext());
-        dateContainer.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams dateContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dateContainerParams.topMargin = dpToPx(requireContext(), 12);
-        dateContainer.setLayoutParams(dateContainerParams);
-
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
-        String todayStr = sdf.format(new java.util.Date());
-
-        com.google.android.material.textfield.TextInputLayout layoutStart = new com.google.android.material.textfield.TextInputLayout(requireContext(), null, com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox);
-        layoutStart.setHint("Ngày bắt đầu");
-        LinearLayout.LayoutParams startParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        startParams.rightMargin = dpToPx(requireContext(), 6);
-        layoutStart.setLayoutParams(startParams);
-        
-        com.google.android.material.textfield.TextInputEditText edtStart = new com.google.android.material.textfield.TextInputEditText(layoutStart.getContext());
-        edtStart.setFocusable(false);
-        edtStart.setClickable(true);
-        edtStart.setText(todayStr);
-        edtStart.setOnClickListener(v -> {
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            new android.app.DatePickerDialog(requireContext(), (view2, year, month, dayOfMonth) -> {
-                cal.set(java.util.Calendar.YEAR, year);
-                cal.set(java.util.Calendar.MONTH, month);
-                cal.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth);
-                edtStart.setText(sdf.format(cal.getTime()));
-            }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
-        });
-        layoutStart.addView(edtStart);
-        dateContainer.addView(layoutStart);
-        fields.edtStart = edtStart;
-
-        com.google.android.material.textfield.TextInputLayout layoutEnd = new com.google.android.material.textfield.TextInputLayout(requireContext(), null, com.google.android.material.R.style.Widget_MaterialComponents_TextInputLayout_OutlinedBox);
-        layoutEnd.setHint("Ngày kết thúc");
-        LinearLayout.LayoutParams endParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-        endParams.leftMargin = dpToPx(requireContext(), 6);
-        layoutEnd.setLayoutParams(endParams);
-        
-        com.google.android.material.textfield.TextInputEditText edtEnd = new com.google.android.material.textfield.TextInputEditText(layoutEnd.getContext());
-        edtEnd.setFocusable(false);
-        edtEnd.setClickable(true);
-        edtEnd.setText(todayStr);
-        edtEnd.setOnClickListener(v -> {
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            new android.app.DatePickerDialog(requireContext(), (view2, year, month, dayOfMonth) -> {
-                cal.set(java.util.Calendar.YEAR, year);
-                cal.set(java.util.Calendar.MONTH, month);
-                cal.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth);
-                edtEnd.setText(sdf.format(cal.getTime()));
-            }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
-        });
-        layoutEnd.addView(edtEnd);
-        dateContainer.addView(layoutEnd);
-        fields.edtEnd = edtEnd;
-
-        rootContainer.addView(dateContainer, 5);
-
-        return fields;
-    }
-
     private void showCreateProjectBottomSheet() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_setup_project, null);
@@ -258,81 +152,72 @@ public class HomeFragment extends BaseFragment {
 
         EditText inputTitle = dialogView.findViewById(R.id.edtProjectTitle);
         EditText inputDesc = dialogView.findViewById(R.id.edtProjectDesc);
+        EditText edtMembers = dialogView.findViewById(R.id.edtMembersCount);
+        EditText edtStatus = dialogView.findViewById(R.id.edtProjectStatus);
+        EditText edtStart = dialogView.findViewById(R.id.edtStartDate);
+        EditText edtEnd = dialogView.findViewById(R.id.edtEndDate);
         View btnCreate = dialogView.findViewById(R.id.btnCreateProject);
 
-        if (btnCreate == null) {
-            showCreateProjectDialog();
-            return;
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+        String todayStr = sdf.format(new java.util.Date());
+
+        if (edtStart != null) edtStart.setText(todayStr);
+        if (edtEnd != null) edtEnd.setText(todayStr);
+
+        if (edtStatus != null) {
+            edtStatus.setOnClickListener(v -> {
+                String[] statuses = {"Kế hoạch", "Đang thực hiện", "Hoàn thành"};
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Chọn trạng thái")
+                        .setItems(statuses, (dialog, which) -> edtStatus.setText(statuses[which]))
+                        .show();
+            });
         }
 
-        ProjectInputFields fields = injectCustomProjectFields((LinearLayout) dialogView);
+        View.OnClickListener datePickerListener = v -> {
+            EditText target = (EditText) v;
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            new android.app.DatePickerDialog(requireContext(), (view2, year, month, dayOfMonth) -> {
+                cal.set(java.util.Calendar.YEAR, year);
+                cal.set(java.util.Calendar.MONTH, month);
+                cal.set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth);
+                target.setText(sdf.format(cal.getTime()));
+            }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+        };
 
-        btnCreate.setOnClickListener(v -> {
-            String title = inputTitle.getText().toString().trim();
-            String desc = inputDesc.getText().toString().trim();
-            String start = fields.edtStart.getText().toString().trim();
-            String end = fields.edtEnd.getText().toString().trim();
-            String status = fields.edtStatus.getText().toString().trim();
-            String membersStr = fields.edtMembers.getText().toString().trim();
-            int members = 1;
-            try {
-                members = Integer.parseInt(membersStr);
-            } catch (Exception ignored) {}
+        if (edtStart != null) edtStart.setOnClickListener(datePickerListener);
+        if (edtEnd != null) edtEnd.setOnClickListener(datePickerListener);
 
-            if (!title.isEmpty()) {
-                viewModel.createProject(title, desc, start, end, status, members, () -> {
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> {
-                            viewModel.loadProjects();
-                            showTimedToast("Dự án đã được tạo và liên kết đội ngũ thành công!");
-                            bottomSheetDialog.dismiss();
-                        });
-                    }
-                });
-            } else {
-                showTimedToast("Vui lòng nhập tên dự án");
-            }
-        });
+        if (btnCreate != null) {
+            btnCreate.setOnClickListener(v -> {
+                String title = inputTitle.getText().toString().trim();
+                String desc = inputDesc.getText().toString().trim();
+                String start = edtStart.getText().toString().trim();
+                String end = edtEnd.getText().toString().trim();
+                String status = edtStatus.getText().toString().trim();
+                String membersStr = edtMembers.getText().toString().trim();
+                int members = 5;
+                try {
+                    members = Integer.parseInt(membersStr);
+                } catch (Exception ignored) {}
+
+                if (!title.isEmpty()) {
+                    viewModel.createProject(title, desc, start, end, status, members, () -> {
+                        if (getActivity() != null) {
+                            getActivity().runOnUiThread(() -> {
+                                viewModel.loadProjects();
+                                showTimedToast("Dự án đã được tạo thành công!");
+                                bottomSheetDialog.dismiss();
+                            });
+                        }
+                    });
+                } else {
+                    showTimedToast("Vui lòng nhập tên dự án");
+                }
+            });
+        }
 
         bottomSheetDialog.show();
-    }
-
-    private void showCreateProjectDialog() {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_setup_project, null);
-        EditText inputTitle = dialogView.findViewById(R.id.edtProjectTitle);
-        EditText inputDesc = dialogView.findViewById(R.id.edtProjectDesc);
-
-        ProjectInputFields fields = injectCustomProjectFields((LinearLayout) dialogView);
-
-        new AlertDialog.Builder(requireContext())
-                .setView(dialogView)
-                .setPositiveButton("Tạo Dự Án", (dialog, which) -> {
-                    String title = inputTitle.getText().toString().trim();
-                    String desc = inputDesc.getText().toString().trim();
-                    String start = fields.edtStart.getText().toString().trim();
-                    String end = fields.edtEnd.getText().toString().trim();
-                    String status = fields.edtStatus.getText().toString().trim();
-                    String membersStr = fields.edtMembers.getText().toString().trim();
-                    int members = 1;
-                    try {
-                        members = Integer.parseInt(membersStr);
-                    } catch (Exception ignored) {}
-                    
-                    if (!title.isEmpty()) {
-                        viewModel.createProject(title, desc, start, end, status, members, () -> {
-                            if (getActivity() != null) {
-                                  getActivity().runOnUiThread(() -> {
-                                      viewModel.loadProjects();
-                                      showTimedToast("Dự án đã được khởi tạo và liên kết đội ngũ!");
-                                  });
-                            }
-                        });
-                    } else {
-                        showTimedToast("Vui lòng nhập tên dự án");
-                    }
-                })
-                .setNegativeButton("Hủy", null)
-                .show();
     }
 
     private static int dpToPx(Context context, int dp) {

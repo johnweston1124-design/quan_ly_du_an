@@ -8,26 +8,25 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.quan_ly_du_an.model.ProjectWithRole;
 import com.example.quan_ly_du_an.feature_project.repository.ProjectRepository;
 import com.example.quan_ly_du_an.utils.SessionManager;
+import androidx.lifecycle.Transformations;
 import java.util.List;
 
 public class HomeViewModel extends AndroidViewModel {
     private final ProjectRepository repository;
-    private final MutableLiveData<List<ProjectWithRole>> _userProjects = new MutableLiveData<>();
+    private final MutableLiveData<Long> _userId = new MutableLiveData<>();
+    private final LiveData<List<ProjectWithRole>> _userProjects;
     private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
         repository = new ProjectRepository(application);
+        _userProjects = Transformations.switchMap(_userId, repository::getProjectsForUser);
         loadProjects();
     }
 
     public void loadProjects() {
-        new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-            long userId = SessionManager.getCurrentUserId(getApplication());
-            repository.getProjectsForUser(userId).observeForever(projects -> {
-                _userProjects.postValue(projects);
-            });
-        });
+        long userId = SessionManager.getCurrentUserId(getApplication());
+        _userId.setValue(userId);
     }
 
     public LiveData<List<ProjectWithRole>> getUserProjects() {

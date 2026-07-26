@@ -1,6 +1,7 @@
 package com.example.quan_ly_du_an.feature_project.ui.home;
 
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,16 +77,20 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             tvProjectStatus.setText(item.status);
             tvUserRoleBadge.setText(item.role);
 
+            GradientDrawable shape = new GradientDrawable();
+            shape.setCornerRadius(12);
+
             if (RoleEnum.ADMIN.getRoleName().equalsIgnoreCase(item.role)) {
                 tvUserRoleBadge.setTextColor(Color.parseColor("#B71C1C"));
-                tvUserRoleBadge.setBackgroundColor(Color.parseColor("#FFEBEE"));
+                shape.setColor(Color.parseColor("#FFEBEE"));
             } else if (RoleEnum.LEADER.getRoleName().equalsIgnoreCase(item.role)) {
                 tvUserRoleBadge.setTextColor(Color.parseColor("#E65100"));
-                tvUserRoleBadge.setBackgroundColor(Color.parseColor("#FFF3E0"));
+                shape.setColor(Color.parseColor("#FFF3E0"));
             } else {
                 tvUserRoleBadge.setTextColor(Color.parseColor("#1B5E20"));
-                tvUserRoleBadge.setBackgroundColor(Color.parseColor("#E8F5E9"));
+                shape.setColor(Color.parseColor("#E8F5E9"));
             }
+            tvUserRoleBadge.setBackground(shape);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onProjectClick(item);

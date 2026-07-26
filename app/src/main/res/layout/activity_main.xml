@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".activities.MainActivity">
 
     <!-- Container cho các màn hình -->
@@ -12,6 +13,7 @@
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,6 +24,7 @@
             android:id="@+id/layoutHome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#FFFFFF"
             android:visibility="visible">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,11 +37,14 @@
                     android:text="Tổng quan hệ thống"
                     android:textSize="22sp"
                     android:textStyle="bold"
+                    android:textColor="#212121"
                     android:layout_marginBottom="16dp"/>
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardElevation="2dp"
                     android:layout_marginBottom="16dp">
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -49,11 +55,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Dự án đang làm: 5"
+                            android:textColor="#212121"
                             android:textSize="16sp"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Công việc hôm nay: 12"
+                            android:textColor="#212121"
                             android:textSize="16sp"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
