@@ -26,7 +26,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public void loadProjects() {
         long userId = SessionManager.getCurrentUserId(getApplication());
-        _userId.setValue(userId);
+        _userId.postValue(userId);
     }
 
     public LiveData<List<ProjectWithRole>> getUserProjects() {

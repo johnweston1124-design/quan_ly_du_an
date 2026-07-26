@@ -190,12 +190,12 @@ public class HomeFragment extends BaseFragment {
 
         if (btnCreate != null) {
             btnCreate.setOnClickListener(v -> {
-                String title = inputTitle.getText().toString().trim();
-                String desc = inputDesc.getText().toString().trim();
-                String start = edtStart.getText().toString().trim();
-                String end = edtEnd.getText().toString().trim();
-                String status = edtStatus.getText().toString().trim();
-                String membersStr = edtMembers.getText().toString().trim();
+                String title = inputTitle != null ? inputTitle.getText().toString().trim() : "";
+                String desc = inputDesc != null ? inputDesc.getText().toString().trim() : "";
+                String start = edtStart != null ? edtStart.getText().toString().trim() : "";
+                String end = edtEnd != null ? edtEnd.getText().toString().trim() : "";
+                String status = edtStatus != null ? edtStatus.getText().toString().trim() : "";
+                String membersStr = edtMembers != null ? edtMembers.getText().toString().trim() : "";
                 int members = 5;
                 try {
                     members = Integer.parseInt(membersStr);

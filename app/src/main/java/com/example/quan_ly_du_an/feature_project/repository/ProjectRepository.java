@@ -73,15 +73,29 @@ public class ProjectRepository {
             }
         }
         executorService.execute(() -> {
-            Project project = new Project(title, desc, status != null ? status : "Đang thực hiện", 
-                                          startDate != null ? startDate : "", endDate != null ? endDate : "", expectedMembers);
-            long id = projectDao.insertProject(project);
-            if (id != -1) {
-                ProjectMember adminMember = new ProjectMember(id, creatorUserId, "ADMIN");
-                projectMemberDao.insertProjectMember(adminMember);
-                if (onSuccess != null) onSuccess.run();
-            } else if (onError != null) {
-                onError.onError("Lỗi khi tạo dự án trong Database");
+            try {
+                // Đảm bảo user có tồn tại trong CSDL để tránh lỗi FOREIGN KEY constraint
+                if (userDao.getUserById((int) creatorUserId) == null) {
+                    com.example.quan_ly_du_an.model.User dummyUser = new com.example.quan_ly_du_an.model.User("Demo User", "demo" + creatorUserId + "@example.com", "123456");
+                    dummyUser.setId((int) creatorUserId);
+                    userDao.insertUser(dummyUser);
+                }
+
+                Project project = new Project(title, desc, status != null ? status : "Đang thực hiện", 
+                                              startDate != null ? startDate : "", endDate != null ? endDate : "", expectedMembers);
+                long id = projectDao.insertProject(project);
+                if (id != -1) {
+                    ProjectMember adminMember = new ProjectMember(id, creatorUserId, "ADMIN");
+                    projectMemberDao.insertProjectMember(adminMember);
+                    if (onSuccess != null) onSuccess.run();
+                } else if (onError != null) {
+                    onError.onError("Lỗi khi tạo dự án trong Database");
+                }
+            } catch (Exception e) {
+                if (onError != null) {
+                    onError.onError("Lỗi CSDL: " + e.getMessage());
+                }
+                e.printStackTrace();
             }
         });
     }
