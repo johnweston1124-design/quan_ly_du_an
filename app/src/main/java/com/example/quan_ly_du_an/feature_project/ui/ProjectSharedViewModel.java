@@ -3,7 +3,7 @@ package com.example.quan_ly_du_an.feature_project.ui;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.quan_ly_du_an.feature_project.data.model.ProjectWithRole;
+import com.example.quan_ly_du_an.model.ProjectWithRole;
 
 /**
  * ViewModel chia sẻ giữa Tab Dự án và Tab Đội ngũ để đồng bộ dữ liệu.

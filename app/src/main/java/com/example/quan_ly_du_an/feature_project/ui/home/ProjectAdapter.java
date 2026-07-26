@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.quan_ly_du_an.R;
-import com.example.quan_ly_du_an.feature_project.data.model.ProjectWithRole;
+import com.example.quan_ly_du_an.model.ProjectWithRole;
 import com.example.quan_ly_du_an.utils.RoleEnum;
 import java.util.ArrayList;
 import java.util.List;

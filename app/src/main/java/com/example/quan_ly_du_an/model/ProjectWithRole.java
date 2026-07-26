@@ -1,4 +1,4 @@
-package com.example.quan_ly_du_an.feature_project.data.model;
+package com.example.quan_ly_du_an.model;
 
 public class ProjectWithRole {
     public long projectId;

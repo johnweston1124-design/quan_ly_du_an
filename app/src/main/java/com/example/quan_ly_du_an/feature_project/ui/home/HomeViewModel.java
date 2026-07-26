@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.quan_ly_du_an.feature_project.data.model.ProjectWithRole;
+import com.example.quan_ly_du_an.model.ProjectWithRole;
 import com.example.quan_ly_du_an.feature_project.repository.ProjectRepository;
 import com.example.quan_ly_du_an.utils.SessionManager;
 import java.util.List;

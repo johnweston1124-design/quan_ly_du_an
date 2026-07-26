@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.quan_ly_du_an.R;
-import com.example.quan_ly_du_an.feature_project.data.model.MemberWithRole;
+import com.example.quan_ly_du_an.model.MemberWithRole;
 import com.example.quan_ly_du_an.feature_project.ui.member.AddMemberDialog;
 import com.example.quan_ly_du_an.utils.RoleUtils;
 import com.example.quan_ly_du_an.utils.SessionManager;

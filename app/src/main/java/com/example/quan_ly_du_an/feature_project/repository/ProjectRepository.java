@@ -4,24 +4,31 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.quan_ly_du_an.database.AppDatabase;
-import com.example.quan_ly_du_an.feature_project.data.model.MemberWithRole;
-import com.example.quan_ly_du_an.feature_project.data.model.ProjectWithRole;
-import com.example.quan_ly_du_an.feature_project.data.sqlite.AppDbHelper;
-import com.example.quan_ly_du_an.feature_project.data.sqlite.MemberDaoSqlite;
-import com.example.quan_ly_du_an.model.Task;
+import com.example.quan_ly_du_an.database.ProjectDao;
+import com.example.quan_ly_du_an.database.ProjectMemberDao;
+import com.example.quan_ly_du_an.database.UserDao;
+import com.example.quan_ly_du_an.model.MemberWithRole;
+import com.example.quan_ly_du_an.model.Project;
+import com.example.quan_ly_du_an.model.ProjectMember;
+import com.example.quan_ly_du_an.model.ProjectWithRole;
+import com.example.quan_ly_du_an.model.User;
+import com.example.quan_ly_du_an.utils.SessionManager;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ProjectRepository {
-    private final MemberDaoSqlite memberDao;
     private final AppDatabase roomDb;
+    private final ProjectDao projectDao;
+    private final ProjectMemberDao projectMemberDao;
+    private final UserDao userDao;
     private final ExecutorService executorService;
 
     public ProjectRepository(Application application) {
-        AppDbHelper dbHelper = AppDbHelper.getInstance(application);
-        this.memberDao = new MemberDaoSqlite(dbHelper);
         this.roomDb = AppDatabase.getDatabase(application);
+        this.projectDao = roomDb.projectDao();
+        this.projectMemberDao = roomDb.projectMemberDao();
+        this.userDao = roomDb.userDao();
         this.executorService = Executors.newFixedThreadPool(4);
     }
 
@@ -30,17 +37,17 @@ public class ProjectRepository {
     public LiveData<List<ProjectWithRole>> getProjectsForUser(long userId) {
         MutableLiveData<List<ProjectWithRole>> liveData = new MutableLiveData<>();
         executorService.execute(() -> {
-            List<ProjectWithRole> data = memberDao.getProjectsForUser(userId);
+            List<ProjectWithRole> data = projectDao.getProjectsForUser(userId);
             liveData.postValue(data);
         });
         return liveData;
     }
 
-    // Cung cấp cho Phân công 4 (Search)
     public LiveData<List<ProjectWithRole>> searchProjects(long userId, String keyword) {
         MutableLiveData<List<ProjectWithRole>> liveData = new MutableLiveData<>();
         executorService.execute(() -> {
-            List<ProjectWithRole> data = memberDao.searchProjects(userId, keyword);
+            String wildCard = "%" + keyword + "%";
+            List<ProjectWithRole> data = projectDao.searchProjects(userId, wildCard);
             liveData.postValue(data);
         });
         return liveData;
@@ -66,9 +73,13 @@ public class ProjectRepository {
             }
         }
         executorService.execute(() -> {
-            long id = memberDao.createProject(title, desc, status, startDate, endDate, expectedMembers, creatorUserId);
+            Project project = new Project(title, desc, status != null ? status : "Đang thực hiện", 
+                                          startDate != null ? startDate : "", endDate != null ? endDate : "", expectedMembers);
+            long id = projectDao.insertProject(project);
             if (id != -1) {
-                onSuccess.run();
+                ProjectMember adminMember = new ProjectMember(id, creatorUserId, "ADMIN");
+                projectMemberDao.insertProjectMember(adminMember);
+                if (onSuccess != null) onSuccess.run();
             } else if (onError != null) {
                 onError.onError("Lỗi khi tạo dự án trong Database");
             }
@@ -77,14 +88,14 @@ public class ProjectRepository {
 
     public void deleteProject(long projectId, long currentUserId, Runnable onSuccess, OnError onError) {
         executorService.execute(() -> {
-            String role = memberDao.getUserRoleSync(projectId, currentUserId);
+            String role = projectMemberDao.getUserRoleSync(projectId, currentUserId);
             if (!"ADMIN".equalsIgnoreCase(role)) {
                 if (onError != null) onError.onError("Chỉ ADMIN mới có quyền xóa dự án!");
                 return;
             }
             
-            boolean success = memberDao.deleteProject(projectId);
-            if (success) {
+            int rowsDeleted = projectDao.deleteProject(projectId);
+            if (rowsDeleted > 0) {
                 try {
                     roomDb.query("DELETE FROM tasks WHERE projectId = ?", new Object[]{projectId});
                 } catch (Exception e) {
@@ -97,13 +108,12 @@ public class ProjectRepository {
         });
     }
 
-
     // --- API CHO PHÂN CÔNG 3 (MEMBER) ---
 
     public LiveData<List<MemberWithRole>> getMembersByProjectId(long projectId) {
         MutableLiveData<List<MemberWithRole>> liveData = new MutableLiveData<>();
         executorService.execute(() -> {
-            List<MemberWithRole> data = memberDao.getMembersByProjectId(projectId);
+            List<MemberWithRole> data = projectMemberDao.getMembersByProjectId(projectId);
             if (data != null) {
                 for (MemberWithRole member : data) {
                     int count = 0;
@@ -130,15 +140,21 @@ public class ProjectRepository {
             return;
         }
         executorService.execute(() -> {
-            if (memberDao.isMemberAlreadyInProject(projectId, email)) {
+            if (projectMemberDao.isMemberAlreadyInProject(projectId, email)) {
                 if (onError != null) onError.onError("Thành viên này đã có trong dự án");
                 return;
             }
 
-            long result = memberDao.addMemberByEmail(projectId, email, role);
-            if (result == -2) {
+            User user = userDao.getUserByEmail(email);
+            if (user == null) {
                 if (onError != null) onError.onError("Tài khoản email này không tồn tại trong hệ thống");
-            } else if (result != -1) {
+                return;
+            }
+            
+            ProjectMember member = new ProjectMember(projectId, user.getId(), role);
+            long result = projectMemberDao.insertProjectMember(member);
+
+            if (result != -1) {
                 if (onSuccess != null) onSuccess.run();
             } else if (onError != null) {
                 onError.onError("Lỗi khi thêm thành viên");
@@ -148,7 +164,6 @@ public class ProjectRepository {
 
     public void removeMember(long projectId, long userId, Runnable onSuccess, OnError onError) {
         executorService.execute(() -> {
-            // Nghiệp vụ: Kiểm tra Task chưa hoàn thành của Member (Kết nối Phân công 3)
             int count = 0;
             try (android.database.Cursor cursor = roomDb.query(
                     "SELECT COUNT(*) FROM tasks WHERE projectId = ? AND assignedUserId = ? AND status != 'Hoàn thành'",
@@ -165,13 +180,14 @@ public class ProjectRepository {
                 return;
             }
 
-            memberDao.removeMember(projectId, userId);
+            projectMemberDao.removeMember(projectId, userId);
             if (onSuccess != null) onSuccess.run();
         });
     }
 
     public String getUserRoleSync(long projectId, long userId) {
-        return memberDao.getUserRoleSync(projectId, userId);
+        String role = projectMemberDao.getUserRoleSync(projectId, userId);
+        return role != null ? role : "MEMBER";
     }
 
     public interface OnError {
