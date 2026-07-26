@@ -15,9 +15,13 @@ import com.example.quan_ly_du_an.R;
 import com.example.quan_ly_du_an.adapter.TaskAdapter;
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.databinding.ActivityMainBinding;
+import com.example.quan_ly_du_an.feature_project.ui.ProjectSharedViewModel;
+import com.example.quan_ly_du_an.feature_project.ui.home.HomeFragment;
+import com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment;
 import com.example.quan_ly_du_an.model.Task;
 import com.example.quan_ly_du_an.model.User;
 import com.google.android.material.chip.Chip;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private ActivityMainBinding binding;
     private TaskAdapter taskAdapter;
+    private ProjectSharedViewModel projectSharedViewModel;
     private List<Task> currentFullList = new ArrayList<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private AppDatabase db;
@@ -47,9 +52,37 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         initProjectTab();
         loadUserProfile();
         setupBottomNavigation();
+        setupProjectNavigationSync();
         
         // Mặc định hiện tab Home
         showTab(R.id.nav_home);
+    }
+
+    private void setupProjectNavigationSync() {
+        projectSharedViewModel = new ViewModelProvider(this).get(ProjectSharedViewModel.class);
+        projectSharedViewModel.getNavigateToTeamRequest().observe(this, shouldNavigate -> {
+            if (shouldNavigate) {
+                // Chuyển sang Tab Đội ngũ (nav_team)
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_team);
+                
+                // Mở trực tiếp ProjectDetailFragment
+                var selected = projectSharedViewModel.getSelectedProject().getValue();
+                if (selected != null) {
+                    com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment fragment = 
+                        com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment.newInstance(
+                            selected.projectId,
+                            selected.title,
+                            selected.role);
+                    
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.layoutTeam, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+                
+                projectSharedViewModel.completeNavigation();
+            }
+        });
     }
 
     private void loadUserProfile() {
@@ -155,9 +188,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void initProjectTab() {
-        binding.layoutProjects.fabAddProject.setOnClickListener(v -> {
-            Toast.makeText(this, "Thêm dự án mới", Toast.LENGTH_SHORT).show();
-        });
+        // Gắn HomeFragment vào layoutProjects
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.layoutProjects, new HomeFragment())
+                .commit();
     }
 
     private void setupBottomNavigation() {
@@ -169,16 +203,26 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private void showTab(int itemId) {
         binding.layoutHome.setVisibility(View.GONE);
-        binding.layoutProjects.getRoot().setVisibility(View.GONE);
+        binding.layoutProjects.setVisibility(View.GONE);
         binding.layoutTasks.getRoot().setVisibility(View.GONE);
         binding.layoutProfile.getRoot().setVisibility(View.GONE);
+        binding.layoutTeam.setVisibility(View.GONE);
 
         if (itemId == R.id.nav_home) {
             binding.layoutHome.setVisibility(View.VISIBLE);
         } else if (itemId == R.id.nav_project) {
-            binding.layoutProjects.getRoot().setVisibility(View.VISIBLE);
+            binding.layoutProjects.setVisibility(View.VISIBLE);
         } else if (itemId == R.id.nav_task) {
             binding.layoutTasks.getRoot().setVisibility(View.VISIBLE);
+        } else if (itemId == R.id.nav_team) {
+            binding.layoutTeam.setVisibility(View.VISIBLE);
+            
+            // Xóa backstack nếu có
+            getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.layoutTeam, new com.example.quan_ly_du_an.feature_project.ui.home.TeamProjectsFragment())
+                    .commit();
         } else if (itemId == R.id.nav_settings) {
             binding.layoutProfile.getRoot().setVisibility(View.VISIBLE);
         }

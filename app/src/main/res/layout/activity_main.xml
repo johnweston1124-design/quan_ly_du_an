@@ -61,9 +61,10 @@
         </ScrollView>
 
         <!-- Tab 2: Dự án (Projects) -->
-        <include
+        <FrameLayout
             android:id="@+id/layoutProjects"
-            layout="@layout/fragment_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:visibility="gone" />
 
         <!-- Tab 3: Công việc (Tasks) - Sử dụng lại layout task -->
@@ -76,6 +77,13 @@
         <include
             android:id="@+id/layoutProfile"
             layout="@layout/layout_ca_nhan"
+            android:visibility="gone" />
+
+        <!-- Tab 4: Đội ngũ (Team) -->
+        <FrameLayout
+            android:id="@+id/layoutTeam"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:visibility="gone" />
 
     </FrameLayout>

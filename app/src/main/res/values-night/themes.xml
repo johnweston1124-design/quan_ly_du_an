@@ -2,6 +2,13 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Quan_ly_du_an" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">#81C784</item>
+        <item name="colorOnPrimary">#003300</item>
+        <item name="colorPrimaryContainer">#1B5E20</item>
+        <item name="colorOnPrimaryContainer">#C8E6C9</item>
+        <item name="colorSecondary">#A5D6A7</item>
+        <item name="colorOnSecondary">#003300</item>
+        <item name="colorSecondaryContainer">#2E7D32</item>
+        <item name="colorOnSecondaryContainer">#E8F5E9</item>
     </style>
 </resources>

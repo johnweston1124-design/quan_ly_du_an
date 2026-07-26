@@ -82,6 +82,7 @@ public class AddMemberDialog extends DialogFragment {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         Toast.makeText(getContext(), "Đã thêm thành viên vào dự án!", Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().setFragmentResult("refresh_members", new Bundle());
                         dismiss();
                     });
                 }

@@ -2,8 +2,20 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Quan_ly_du_an" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">#2E7D32</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#E8F5E9</item>
+        <item name="colorOnPrimaryContainer">#1B5E20</item>
+        <item name="colorSecondary">#388E3C</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#C8E6C9</item>
+        <item name="colorOnSecondaryContainer">#1B5E20</item>
     </style>
 
     <style name="Theme.Quan_ly_du_an" parent="Base.Theme.Quan_ly_du_an" />
+
+    <style name="RoundedSquareFab" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>

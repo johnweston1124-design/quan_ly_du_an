@@ -6,6 +6,7 @@ public class MemberWithRole {
     public String email;
     public String avatarUrl;
     public String role; // Quyền của thành viên này trong dự án
+    public int taskCount; // Số lượng công việc được phân công trong dự án
 
     public MemberWithRole(long userId, String name, String email, String avatarUrl, String role) {
         this.userId = userId;
@@ -13,5 +14,6 @@ public class MemberWithRole {
         this.email = email;
         this.avatarUrl = avatarUrl;
         this.role = role;
+        this.taskCount = 0;
     }
 }

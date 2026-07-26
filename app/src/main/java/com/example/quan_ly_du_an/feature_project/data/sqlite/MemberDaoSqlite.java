@@ -15,7 +15,7 @@ public class MemberDaoSqlite {
         this.dbHelper = dbHelper;
     }
 
-    // 1. ADVANCED QUERY: Lấy danh sách dự án mà User đang tham gia kèm Quyền (INNER JOIN)
+    // 1. Lấy danh sách dự án của User (Có lọc/Sắp xếp mặc định)
     public List<ProjectWithRole> getProjectsForUser(long userId) {
         List<ProjectWithRole> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -42,11 +42,36 @@ public class MemberDaoSqlite {
         return list;
     }
 
-    // 2. Lấy danh sách thành viên trong 1 dự án (INNER JOIN)
+    // 2. Tìm kiếm dự án (Đầu ra cho Phân công 4 - Search)
+    public List<ProjectWithRole> searchProjects(long userId, String keyword) {
+        List<ProjectWithRole> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT p.project_id, p.title, p.description, p.status, m.role " +
+                "FROM projects p " +
+                "INNER JOIN project_member_cross_ref m ON p.project_id = m.project_id " +
+                "WHERE m.user_id = ? AND (p.title LIKE ? OR p.description LIKE ?)";
+
+        String wildCard = "%" + keyword + "%";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), wildCard, wildCard});
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                list.add(new ProjectWithRole(
+                        cursor.getLong(cursor.getColumnIndexOrThrow("project_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("title")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("status")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("role"))
+                ));
+            }
+            cursor.close();
+        }
+        return list;
+    }
+
+    // 3. Quản lý thành viên
     public List<MemberWithRole> getMembersByProjectId(long projectId) {
         List<MemberWithRole> list = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
         String query = "SELECT u.id, u.name, u.email, m.role " +
                 "FROM users u " +
                 "INNER JOIN project_member_cross_ref m ON u.id = m.user_id " +
@@ -60,7 +85,7 @@ public class MemberDaoSqlite {
                         cursor.getLong(cursor.getColumnIndexOrThrow("id")),
                         cursor.getString(cursor.getColumnIndexOrThrow("name")),
                         cursor.getString(cursor.getColumnIndexOrThrow("email")),
-                        "", // avatarUrl để trống
+                        "",
                         cursor.getString(cursor.getColumnIndexOrThrow("role"))
                 ));
             }
@@ -69,75 +94,85 @@ public class MemberDaoSqlite {
         return list;
     }
 
-    // 3. Thêm thành viên bằng Email (Kiểm tra user có trong system chưa)
-    public boolean addMemberByEmail(long projectId, String email, String role) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+    public boolean isMemberAlreadyInProject(long projectId, String email) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String query = "SELECT 1 FROM project_member_cross_ref m " +
+                "JOIN users u ON m.user_id = u.id " +
+                "WHERE m.project_id = ? AND u.email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(projectId), email});
+        boolean exists = (cursor != null && cursor.getCount() > 0);
+        if (cursor != null) cursor.close();
+        return exists;
+    }
 
-        // Tìm user theo email
+    public long addMemberByEmail(long projectId, String email, String role) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT id FROM users WHERE email = ?", new String[]{email});
         long userId = -1;
         if (cursor != null && cursor.moveToFirst()) {
-            userId = cursor.getLong(cursor.getColumnIndexOrThrow("id"));
+            userId = cursor.getLong(0);
             cursor.close();
-        } else {
-            // Nếu chưa có, tạo user tạm để test
-            if (cursor != null) cursor.close();
-            ContentValues userVals = new ContentValues();
-            userVals.put("name", email.substring(0, email.indexOf('@')));
-            userVals.put("email", email);
-            userId = db.insert("users", null, userVals);
         }
+        if (userId == -1) return -2; // Mã lỗi: User không tồn tại trong hệ thống
 
-        if (userId != -1) {
-            ContentValues values = new ContentValues();
-            values.put(MemberContract.COLUMN_PROJECT_ID, projectId);
-            values.put(MemberContract.COLUMN_USER_ID, userId);
-            values.put(MemberContract.COLUMN_ROLE, role);
-
-            long res = db.insertWithOnConflict(MemberContract.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            return res != -1;
-        }
-        return false;
+        ContentValues values = new ContentValues();
+        values.put("project_id", projectId);
+        values.put("user_id", userId);
+        values.put("role", role);
+        return db.insertWithOnConflict("project_member_cross_ref", null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    // 4. Xóa thành viên
     public void removeMember(long projectId, long userId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(MemberContract.TABLE_NAME,
-                MemberContract.COLUMN_PROJECT_ID + "=? AND " + MemberContract.COLUMN_USER_ID + "=?",
+        db.delete("project_member_cross_ref", "project_id=? AND user_id=?", 
                 new String[]{String.valueOf(projectId), String.valueOf(userId)});
     }
 
-    // 5. Lấy quyền hiện tại của User
+    // 4. CRUD Dự án
+    public long createProject(String title, String desc, String status, String startDate, String endDate, int expectedMembers, long creatorUserId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues vals = new ContentValues();
+        vals.put("title", title);
+        vals.put("description", desc);
+        vals.put("status", status != null ? status : "Đang thực hiện");
+        vals.put("start_date", startDate != null ? startDate : "");
+        vals.put("end_date", endDate != null ? endDate : "");
+        vals.put("expected_members", expectedMembers);
+        long pId = db.insert("projects", null, vals);
+        if (pId != -1) {
+            ContentValues memVals = new ContentValues();
+            memVals.put("project_id", pId);
+            memVals.put("user_id", creatorUserId);
+            memVals.put("role", "ADMIN");
+            db.insert("project_member_cross_ref", null, memVals);
+        }
+        return pId;
+    }
+
+    public boolean updateProject(long projectId, String title, String desc, String status) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues vals = new ContentValues();
+        vals.put("title", title);
+        vals.put("description", desc);
+        vals.put("status", status);
+        return db.update("projects", vals, "project_id=?", new String[]{String.valueOf(projectId)}) > 0;
+    }
+
+    public boolean deleteProject(long projectId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("project_member_cross_ref", "project_id=?", new String[]{String.valueOf(projectId)});
+        return db.delete("projects", "project_id=?", new String[]{String.valueOf(projectId)}) > 0;
+    }
+
     public String getUserRoleSync(long projectId, long userId) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String role = "MEMBER";
         Cursor cursor = db.rawQuery("SELECT role FROM project_member_cross_ref WHERE project_id=? AND user_id=?",
                 new String[]{String.valueOf(projectId), String.valueOf(userId)});
         if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                role = cursor.getString(0);
-            }
+            if (cursor.moveToFirst()) role = cursor.getString(0);
             cursor.close();
         }
         return role;
-    }
-
-    // 6. Tạo dự án mới (Phục vụ nút FAB ở màn hình Home)
-    public void createProject(String title, String desc, long creatorUserId) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues vals = new ContentValues();
-        vals.put("title", title);
-        vals.put("description", desc);
-        vals.put("status", "Đang thực hiện");
-        long pId = db.insert("projects", null, vals);
-
-        if (pId != -1) {
-            ContentValues memVals = new ContentValues();
-            memVals.put(MemberContract.COLUMN_PROJECT_ID, pId);
-            memVals.put(MemberContract.COLUMN_USER_ID, creatorUserId);
-            memVals.put(MemberContract.COLUMN_ROLE, "ADMIN");
-            db.insert(MemberContract.TABLE_NAME, null, memVals);
-        }
     }
 }

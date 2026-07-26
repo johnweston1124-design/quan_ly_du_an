@@ -9,7 +9,7 @@ import com.example.quan_ly_du_an.utils.RoleEnum;
 
 public class AppDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "project_manager_team.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private static volatile AppDbHelper INSTANCE;
 
@@ -36,7 +36,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
         // ProjectContract.createTable(db);
         // -------------------------------------------------------------------------
         db.execSQL("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT UNIQUE);");
-        db.execSQL("CREATE TABLE IF NOT EXISTS projects (project_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, status TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS projects (project_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, status TEXT, start_date TEXT, end_date TEXT, expected_members INTEGER DEFAULT 1);");
 
         // 3. Tự động chèn dữ liệu mẫu để chạy app thấy ngay giao diện
         seedInitialData(db);

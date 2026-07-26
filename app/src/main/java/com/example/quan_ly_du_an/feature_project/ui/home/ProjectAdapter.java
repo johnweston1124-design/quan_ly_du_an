@@ -16,13 +16,22 @@ import java.util.List;
 public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectViewHolder> {
     private List<ProjectWithRole> projectList = new ArrayList<>();
     private final OnProjectClickListener listener;
+    private OnProjectLongClickListener longClickListener;
 
     public interface OnProjectClickListener {
         void onProjectClick(ProjectWithRole projectWithRole);
     }
 
+    public interface OnProjectLongClickListener {
+        void onProjectLongClick(ProjectWithRole projectWithRole);
+    }
+
     public ProjectAdapter(OnProjectClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnProjectLongClickListener(OnProjectLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     public void setProjects(List<ProjectWithRole> projects) {
@@ -39,7 +48,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
-        holder.bind(projectList.get(position), listener);
+        holder.bind(projectList.get(position), listener, longClickListener);
     }
 
     @Override
@@ -61,7 +70,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
             tvUserRoleBadge = itemView.findViewById(R.id.tvUserRoleBadge);
         }
 
-        public void bind(ProjectWithRole item, OnProjectClickListener listener) {
+        public void bind(ProjectWithRole item, OnProjectClickListener listener, OnProjectLongClickListener longClickListener) {
             tvProjectTitle.setText(item.title);
             tvProjectDescription.setText(item.description);
             tvProjectStatus.setText(item.status);
@@ -80,6 +89,14 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ProjectV
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onProjectClick(item);
+            });
+            
+            itemView.setOnLongClickListener(v -> {
+                if (longClickListener != null) {
+                    longClickListener.onProjectLongClick(item);
+                    return true;
+                }
+                return false;
             });
         }
     }

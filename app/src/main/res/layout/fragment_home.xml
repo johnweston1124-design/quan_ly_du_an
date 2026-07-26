@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragmentContainerHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FA">
@@ -23,6 +24,7 @@
             android:padding="20dp">
 
             <TextView
+                android:id="@+id/tvHomeHeaderTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dự án của tôi"
@@ -31,6 +33,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvHomeHeaderSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -60,6 +63,7 @@
         android:src="@android:drawable/ic_input_add"
         app:borderWidth="0dp"
         app:elevation="4dp"
+        app:shapeAppearanceOverlay="@style/RoundedSquareFab"
         app:tint="#2E7D32" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
