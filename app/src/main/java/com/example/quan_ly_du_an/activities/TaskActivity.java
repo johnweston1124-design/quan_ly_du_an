@@ -22,10 +22,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class
-TaskActivity extends AppCompatActivity
+public class TaskActivity extends AppCompatActivity
         implements TaskAdapter.OnTaskClickListener {
 
     private RecyclerView rvTask;
@@ -123,7 +123,7 @@ TaskActivity extends AppCompatActivity
 
         findViewById(R.id.btnSort).setOnClickListener(v -> {
             List<Task> sortedList = new ArrayList<>(fullTaskList);
-            sortedList.sort((t1, t2) -> t1.getTitle().compareToIgnoreCase(t2.getTitle()));
+            Collections.sort(sortedList, (t1, t2) -> t1.getTitle().compareToIgnoreCase(t2.getTitle()));
             adapter.updateData(sortedList);
             Toast.makeText(this, "Đã sắp xếp theo tên", Toast.LENGTH_SHORT).show();
         });

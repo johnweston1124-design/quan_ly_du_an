@@ -16,6 +16,7 @@
         android:padding="20dp"/>
 
     <TextView
+        android:id="@+id/tvProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nguyễn Văn A"
@@ -25,6 +26,7 @@
         android:layout_marginTop="16dp"/>
 
     <TextView
+        android:id="@+id/tvProfileEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="a.nguyen@email.com"

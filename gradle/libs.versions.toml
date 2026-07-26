@@ -24,4 +24,3 @@ okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-i
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-

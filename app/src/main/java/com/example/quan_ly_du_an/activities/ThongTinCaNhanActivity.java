@@ -59,6 +59,11 @@ public class ThongTinCaNhanActivity extends AppCompatActivity {
                     binding.tvName.setText(user.getName() != null ? user.getName() : "Người dùng");
                     binding.tvEmail.setText(user.getEmail());
                     binding.tvRole.setText("Vai trò: " + user.getRole());
+                } else if (userId == 999) {
+                    // Xử lý tài khoản admin mặc định
+                    binding.tvName.setText("Quản trị viên");
+                    binding.tvEmail.setText("admin@system.com");
+                    binding.tvRole.setText("Vai trò: Admin");
                 } else {
                     Toast.makeText(this, "Lỗi tải thông tin tài khoản", Toast.LENGTH_SHORT).show();
                 }
