@@ -52,19 +52,59 @@
                         android:orientation="vertical"
                         android:padding="16dp">
                         <TextView
+                            android:id="@+id/tvCountProjects"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Dự án đang làm: 5"
+                            android:text="Dự án đang làm: 0"
                             android:textColor="#212121"
                             android:textSize="16sp"/>
                         <TextView
+                            android:id="@+id/tvCountTasks"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Công việc hôm nay: 12"
+                            android:text="Công việc hôm nay: 0"
                             android:textColor="#212121"
                             android:textSize="16sp"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <!-- Dự án mới nhất -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dự án gần đây"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRecentProjects"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="20dp"
+                    tools:listitem="@layout/item_project_card"/>
+
+                <!-- Công việc mới nhất -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Công việc mới nhất"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    android:layout_marginBottom="12dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRecentTasks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="80dp"
+                    tools:listitem="@layout/item_task"/>
+
             </LinearLayout>
         </ScrollView>
 

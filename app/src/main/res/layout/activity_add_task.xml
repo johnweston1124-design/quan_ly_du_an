@@ -47,13 +47,6 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_btn_speak_now"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#000000"
-            android:contentDescription="Action" />
     </LinearLayout>
 
     <View
@@ -80,6 +73,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Tên công việc"
+                android:textColorHint="#757575"
+                app:boxStrokeColor="#757575"
+                app:hintTextColor="#212121"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -88,7 +84,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTaskName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:textColor="#212121"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,6 +95,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:hint="Mô tả chi tiết"
+                android:textColorHint="#757575"
+                app:boxStrokeColor="#757575"
+                app:hintTextColor="#212121"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -108,7 +108,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:gravity="top"
-                    android:inputType="textMultiLine"/>
+                    android:inputType="textMultiLine"
+                    android:textColor="#212121"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,7 +119,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Thời hạn (Deadline)"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="#212121"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeadline"
@@ -136,7 +137,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Độ ưu tiên"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="#212121"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupPriority"
@@ -179,7 +180,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Trạng thái"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="#212121"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupStatus"

@@ -16,6 +16,7 @@ import com.example.quan_ly_du_an.adapter.TaskAdapter;
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.databinding.ActivityMainBinding;
 import com.example.quan_ly_du_an.feature_project.ui.ProjectSharedViewModel;
+import com.example.quan_ly_du_an.feature_project.ui.home.ProjectAdapter;
 import com.example.quan_ly_du_an.feature_project.ui.home.HomeFragment;
 import com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment;
 import com.example.quan_ly_du_an.model.Task;
@@ -37,6 +38,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private List<Task> currentFullList = new ArrayList<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private AppDatabase db;
+    
+    // Thêm adapter cho trang chủ
+    private ProjectAdapter recentProjectAdapter;
+    private TaskAdapter recentTaskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         
         db = AppDatabase.getDatabase(this);
 
+        initHomeTab();
         initTasksTab();
         initProfileTab();
         initProjectTab();
@@ -56,6 +62,59 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         
         // Mặc định hiện tab Home
         showTab(R.id.nav_home);
+    }
+
+    private void initHomeTab() {
+        // 1. Setup RecyclerView cho Dự án gần đây
+        recentProjectAdapter = new ProjectAdapter(projectWithRole -> {
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
+            projectSharedViewModel.selectProject(projectWithRole);
+        });
+        binding.rvRecentProjects.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvRecentProjects.setAdapter(recentProjectAdapter);
+
+        // 2. Setup RecyclerView cho Công việc mới nhất
+        recentTaskAdapter = new TaskAdapter(new ArrayList<>(), this);
+        binding.rvRecentTasks.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvRecentTasks.setAdapter(recentTaskAdapter);
+
+        // 3. Quan sát dữ liệu
+        SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        long userId = sharedPref.getInt("USER_ID", -1);
+
+        if (userId != -1) {
+            // Lấy 3 dự án mới nhất
+            db.projectDao().getLatestProjectsForUser(userId, 3).observe(this, projects -> {
+                if (projects != null) {
+                    recentProjectAdapter.setProjects(projects);
+                    // Cập nhật con số thống kê
+                    executorService.execute(() -> {
+                        int count = db.projectDao().getProjectsForUser(userId).size();
+                        runOnUiThread(() -> binding.tvCountProjects.setText("Dự án đang làm: " + count));
+                    });
+                }
+            });
+
+            // Lấy 3 công việc mới nhất
+            db.taskDao().getLatestTasks(3).observe(this, tasks -> {
+                if (tasks != null) {
+                    recentTaskAdapter.updateData(tasks);
+                    executorService.execute(() -> {
+                        // Tạm thời đếm tất cả task vì chưa có phân quyền user trong task table cụ thể
+                        // (Hoặc nếu đã có phân quyền thì query theo userId)
+                        int count = tasks.size(); // Đây chỉ là 3 task gần nhất, cần đếm tổng
+                        // Tôi sẽ thêm hàm đếm tổng vào TaskDao sau
+                    });
+                }
+            });
+            
+            // Cập nhật tổng số công việc (dùng LiveData getAllTasks để đếm)
+            db.taskDao().getAllTasks().observe(this, allTasks -> {
+                if (allTasks != null) {
+                    binding.tvCountTasks.setText("Công việc hôm nay: " + allTasks.size());
+                }
+            });
+        }
     }
 
     private void setupProjectNavigationSync() {

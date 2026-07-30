@@ -46,13 +46,6 @@
                 android:textSize="15sp" />
         </LinearLayout>
 
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_btn_speak_now"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#000000"
-            android:contentDescription="Action" />
     </LinearLayout>
 
     <View

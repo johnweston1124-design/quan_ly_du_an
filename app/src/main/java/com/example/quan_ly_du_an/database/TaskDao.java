@@ -31,4 +31,7 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE title LIKE :query OR description LIKE :query")
     LiveData<List<Task>> searchTasks(String query);
+
+    @Query("SELECT * FROM tasks ORDER BY taskId DESC LIMIT :limit")
+    LiveData<List<Task>> getLatestTasks(int limit);
 }

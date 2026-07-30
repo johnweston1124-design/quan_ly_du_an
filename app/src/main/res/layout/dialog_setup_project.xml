@@ -9,40 +9,57 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:background="#FFFFFF"
+        android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thêm dự án mới"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1B5E20"
-            android:layout_marginBottom="16dp"/>
+            android:textColor="#212121"
+            android:layout_marginBottom="24dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Tên dự án (Bắt buộc)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:textColorHint="#757575"
+            app:boxStrokeColor="#757575"
+            app:hintTextColor="#212121"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtProjectTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textColor="#212121" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:hint="Mô tả mục tiêu dự án"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:textColorHint="#757575"
+            app:boxStrokeColor="#757575"
+            app:hintTextColor="#212121"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtProjectDesc"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:gravity="top"
-                android:lines="3"/>
+                android:lines="3"
+                android:textColor="#212121" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -50,14 +67,22 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Số lượng thành viên dự kiến">
+            android:layout_marginTop="16dp"
+            android:hint="Số lượng thành viên dự kiến"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="#757575"
+            app:hintTextColor="#212121"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtMembersCount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:text="5"/>
+                android:text="5"
+                android:textColor="#212121" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -65,22 +90,30 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Trạng thái ban đầu">
+            android:layout_marginTop="16dp"
+            android:hint="Trạng thái ban đầu"
+            android:textColorHint="#757575"
+            app:boxStrokeColor="#757575"
+            app:hintTextColor="#212121"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtProjectStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:clickable="true"
-                android:text="Đang thực hiện"/>
+                android:text="Đang thực hiện"
+                android:textColor="#212121" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -88,13 +121,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                android:hint="Ngày bắt đầu">
+                android:hint="Ngày bắt đầu"
+                android:textColorHint="#757575"
+                app:boxStrokeColor="#757575"
+                app:hintTextColor="#212121"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtStartDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:textColor="#212121" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -103,13 +144,21 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
-                android:hint="Ngày kết thúc">
+                android:hint="Ngày kết thúc"
+                android:textColorHint="#757575"
+                app:boxStrokeColor="#757575"
+                app:hintTextColor="#212121"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtEndDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:clickable="true"/>
+                    android:clickable="true"
+                    android:textColor="#212121" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -122,14 +171,15 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateProject"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tạo Dự Án"
-            android:backgroundTint="#2E7D32"
-            android:textColor="@android:color/white"
-            android:paddingVertical="12dp"/>
+            android:layout_height="60dp"
+            android:text="TẠO DỰ ÁN"
+            android:textStyle="bold"
+            app:cornerRadius="16dp"
+            android:backgroundTint="#FF4B63"
+            android:textColor="@android:color/white"/>
 
     </LinearLayout>
 </ScrollView>

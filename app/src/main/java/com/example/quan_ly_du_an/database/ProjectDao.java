@@ -35,4 +35,11 @@ public interface ProjectDao {
            "INNER JOIN project_member_cross_ref m ON p.project_id = m.project_id " +
            "WHERE m.user_id = :userId AND (p.title LIKE :keyword OR p.description LIKE :keyword)")
     List<ProjectWithRole> searchProjects(long userId, String keyword);
+
+    @Query("SELECT p.project_id AS projectId, p.title, p.description, p.status, m.role " +
+           "FROM projects p " +
+           "INNER JOIN project_member_cross_ref m ON p.project_id = m.project_id " +
+           "WHERE m.user_id = :userId " +
+           "ORDER BY p.project_id DESC LIMIT :limit")
+    androidx.lifecycle.LiveData<List<ProjectWithRole>> getLatestProjectsForUser(long userId, int limit);
 }
