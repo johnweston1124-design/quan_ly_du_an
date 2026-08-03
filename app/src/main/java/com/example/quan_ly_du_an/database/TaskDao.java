@@ -26,12 +26,21 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks ORDER BY taskId DESC")
     LiveData<List<Task>> getAllTasks();
 
+    @Query("SELECT * FROM tasks WHERE assignedUserId = :userId ORDER BY taskId DESC")
+    LiveData<List<Task>> getAllTasksForUser(int userId);
+
     @Query("SELECT * FROM tasks WHERE taskId = :taskId LIMIT 1")
     Task getTaskById(int taskId);
 
     @Query("SELECT * FROM tasks WHERE title LIKE :query OR description LIKE :query")
     LiveData<List<Task>> searchTasks(String query);
 
+    @Query("SELECT * FROM tasks WHERE (assignedUserId = :userId) AND (title LIKE :query OR description LIKE :query)")
+    LiveData<List<Task>> searchTasksForUser(int userId, String query);
+
     @Query("SELECT * FROM tasks ORDER BY taskId DESC LIMIT :limit")
     LiveData<List<Task>> getLatestTasks(int limit);
+
+    @Query("SELECT * FROM tasks WHERE assignedUserId = :userId ORDER BY taskId DESC LIMIT :limit")
+    LiveData<List<Task>> getLatestTasksForUser(int userId, int limit);
 }

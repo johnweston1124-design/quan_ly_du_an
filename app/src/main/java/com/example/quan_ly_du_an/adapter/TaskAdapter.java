@@ -122,7 +122,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private void setStatusColor(Chip chip, String status) {
         if (status == null) return;
         switch (status) {
-            case "To Do":
+            case "Tự do":
                 chip.setChipBackgroundColorResource(R.color.gray);
                 break;
             case "In Progress":

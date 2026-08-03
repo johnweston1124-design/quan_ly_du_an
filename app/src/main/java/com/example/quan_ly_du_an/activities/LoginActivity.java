@@ -17,11 +17,21 @@ import com.example.quan_ly_du_an.activities.MainActivity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
     private AppDatabase database;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    
+    private GoogleSignInClient mGoogleSignInClient;
+    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         database = AppDatabase.getDatabase(this);
+
+        // Cấu hình Google Sign-In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("610134536543-iepm19bs8du5kjjel17ujssfl3guv3j8.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         boolean isLoggedIn = sharedPref.getBoolean("IS_LOGGED_IN", false);
@@ -47,11 +64,65 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         binding.btnGoogle.setOnClickListener(v -> {
-            Toast.makeText(this, "Tính năng đăng nhập Google đang phát triển", Toast.LENGTH_SHORT).show();
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
         });
 
         binding.btnFacebook.setOnClickListener(v -> {
             Toast.makeText(this, "Tính năng đăng nhập Facebook đang phát triển", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            
+            // Lấy thông tin từ Google
+            String email = account.getEmail();
+            String displayName = account.getDisplayName();
+            
+            // Xử lý đăng nhập vào hệ thống
+            handleSocialLogin(email, displayName);
+
+        } catch (ApiException e) {
+            int statusCode = e.getStatusCode();
+            String errorMsg = "Lỗi Google (" + statusCode + "): ";
+            
+            switch (statusCode) {
+                case 10: errorMsg += "Mã SHA-1 hoặc Client ID không khớp."; break;
+                case 12500: errorMsg += "Lỗi dịch vụ Google Play."; break;
+                case 12501: errorMsg += "Người dùng đã hủy đăng nhập."; break;
+                case 7: errorMsg += "Không có kết nối mạng."; break;
+                default: errorMsg += e.getMessage(); break;
+            }
+            
+            android.util.Log.e("GOOGLE_LOGIN", "signInResult:failed code=" + statusCode);
+            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void handleSocialLogin(String email, String name) {
+        executorService.execute(() -> {
+            User user = database.userDao().getUserByEmail(email);
+            if (user == null) {
+                // Tạo user mới nếu chưa tồn tại
+                user = new User(name, email, "social_login_no_password");
+                database.userDao().insertUser(user);
+                user = database.userDao().getUserByEmail(email);
+            }
+            
+            final int userId = user.getId();
+            runOnUiThread(() -> saveSessionAndNavigate(userId));
         });
     }
 

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.model.User;
+import com.example.quan_ly_du_an.api.MongoApiService;
+import com.example.quan_ly_du_an.api.RetrofitClient;
 import com.example.quan_ly_du_an.databinding.ActivityRegisterBinding;
 
 import java.util.concurrent.ExecutorService;
@@ -82,6 +84,20 @@ public class RegisterActivity extends AppCompatActivity {
             try {
                 // SỬA LỖI: Gọi đúng hàm insertUser
                 database.userDao().insertUser(newUser);
+
+                // ĐẨY LÊN BACKEND NODEJS
+                RetrofitClient.getMongoService().registerUser(newUser).enqueue(new retrofit2.Callback<User>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<User> call, retrofit2.Response<User> response) {
+                        if (response.isSuccessful()) {
+                            android.util.Log.d("BACKEND", "User saved to MongoDB via NodeJS!");
+                        }
+                    }
+                    @Override
+                    public void onFailure(retrofit2.Call<User> call, Throwable t) {
+                        android.util.Log.e("BACKEND", "Failed to connect to NodeJS: " + t.getMessage());
+                    }
+                });
 
                 runOnUiThread(() -> {
                     Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();

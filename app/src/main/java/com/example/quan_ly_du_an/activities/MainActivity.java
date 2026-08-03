@@ -8,27 +8,33 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.quan_ly_du_an.R;
 import com.example.quan_ly_du_an.adapter.TaskAdapter;
+import com.example.quan_ly_du_an.api.MongoApiService;
+import com.example.quan_ly_du_an.api.RetrofitClient;
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.databinding.ActivityMainBinding;
 import com.example.quan_ly_du_an.feature_project.ui.ProjectSharedViewModel;
-import com.example.quan_ly_du_an.feature_project.ui.home.ProjectAdapter;
 import com.example.quan_ly_du_an.feature_project.ui.home.HomeFragment;
-import com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment;
+import com.example.quan_ly_du_an.feature_project.ui.home.ProjectAdapter;
+import com.example.quan_ly_du_an.model.ProjectWithRole;
 import com.example.quan_ly_du_an.model.Task;
 import com.example.quan_ly_du_an.model.User;
 import com.google.android.material.chip.Chip;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskClickListener {
 
@@ -38,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private List<Task> currentFullList = new ArrayList<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private AppDatabase db;
-    
-    // Thêm adapter cho trang chủ
+
+    // Adapters cho trang chủ
     private ProjectAdapter recentProjectAdapter;
     private TaskAdapter recentTaskAdapter;
 
@@ -49,17 +55,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
-        db = AppDatabase.getDatabase(this);
+
+        db = AppDatabase.getDatabase(getApplicationContext());
 
         initHomeTab();
         initTasksTab();
         initProfileTab();
         initProjectTab();
         loadUserProfile();
+        prepopulateSampleData();
         setupBottomNavigation();
         setupProjectNavigationSync();
-        
+
         // Mặc định hiện tab Home
         showTab(R.id.nav_home);
     }
@@ -80,36 +87,30 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         // 3. Quan sát dữ liệu
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
-        long userId = sharedPref.getInt("USER_ID", -1);
+        int userId = sharedPref.getInt("USER_ID", -1);
 
         if (userId != -1) {
             // Lấy 3 dự án mới nhất
-            db.projectDao().getLatestProjectsForUser(userId, 3).observe(this, projects -> {
+            db.projectDao().getLatestProjectsForUser((long) userId, 3).observe(this, projects -> {
                 if (projects != null) {
                     recentProjectAdapter.setProjects(projects);
-                    // Cập nhật con số thống kê
+                    // Cập nhật con số thống kê dự án
                     executorService.execute(() -> {
-                        int count = db.projectDao().getProjectsForUser(userId).size();
+                        int count = db.projectDao().getProjectsForUser((long) userId).size();
                         runOnUiThread(() -> binding.tvCountProjects.setText("Dự án đang làm: " + count));
                     });
                 }
             });
 
-            // Lấy 3 công việc mới nhất
-            db.taskDao().getLatestTasks(3).observe(this, tasks -> {
+            // Lấy 3 công việc mới nhất của User này
+            db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
                 if (tasks != null) {
                     recentTaskAdapter.updateData(tasks);
-                    executorService.execute(() -> {
-                        // Tạm thời đếm tất cả task vì chưa có phân quyền user trong task table cụ thể
-                        // (Hoặc nếu đã có phân quyền thì query theo userId)
-                        int count = tasks.size(); // Đây chỉ là 3 task gần nhất, cần đếm tổng
-                        // Tôi sẽ thêm hàm đếm tổng vào TaskDao sau
-                    });
                 }
             });
-            
-            // Cập nhật tổng số công việc (dùng LiveData getAllTasks để đếm)
-            db.taskDao().getAllTasks().observe(this, allTasks -> {
+
+            // Cập nhật tổng số công việc của User này
+            db.taskDao().getAllTasksForUser(userId).observe(this, allTasks -> {
                 if (allTasks != null) {
                     binding.tvCountTasks.setText("Công việc hôm nay: " + allTasks.size());
                 }
@@ -120,25 +121,25 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private void setupProjectNavigationSync() {
         projectSharedViewModel = new ViewModelProvider(this).get(ProjectSharedViewModel.class);
         projectSharedViewModel.getNavigateToTeamRequest().observe(this, shouldNavigate -> {
-            if (shouldNavigate) {
+            if (shouldNavigate != null && shouldNavigate) {
                 // Chuyển sang Tab Đội ngũ (nav_team)
                 binding.bottomNavigation.setSelectedItemId(R.id.nav_team);
-                
+
                 // Mở trực tiếp ProjectDetailFragment
-                var selected = projectSharedViewModel.getSelectedProject().getValue();
+                ProjectWithRole selected = projectSharedViewModel.getSelectedProject().getValue();
                 if (selected != null) {
-                    com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment fragment = 
-                        com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment.newInstance(
-                            selected.projectId,
-                            selected.title,
-                            selected.role);
-                    
+                    com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment fragment =
+                            com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment.newInstance(
+                                    selected.projectId,
+                                    selected.title,
+                                    selected.role);
+
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.layoutTeam, fragment)
                             .addToBackStack(null)
                             .commit();
                 }
-                
+
                 projectSharedViewModel.completeNavigation();
             }
         });
@@ -164,41 +165,110 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         }
     }
 
+    private void prepopulateSampleData() {
+        executorService.execute(() -> {
+            // 1. Tạo Nguyen Van B
+            User userB = db.userDao().getUserByEmail("b@email.com");
+            if (userB == null) {
+                userB = new User("Nguyen Van B", "b@email.com", "123456");
+                db.userDao().insertUser(userB);
+                userB = db.userDao().getUserByEmail("b@email.com");
+
+                // PUSH TO BACKEND NODEJS
+                RetrofitClient.getMongoService().registerUser(userB).enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        if (response.isSuccessful()) {
+                            android.util.Log.d("BACKEND", "User B pushed successfully!");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+                        android.util.Log.e("BACKEND", "Network error pushing user: " + t.getMessage());
+                    }
+                });
+            }
+
+            final User finalUserB = userB;
+            // 2. Tạo Task mẫu
+            try (android.database.Cursor cursor = db.query("SELECT COUNT(*) FROM tasks", null)) {
+                if (cursor.moveToFirst() && cursor.getInt(0) == 0) {
+                    Task t1 = new Task(0, 1, finalUserB.getId(), "Thiết kế UI cho mobile", "Tạo các màn hình Dashboard và Profile trên nền trắng", "Cao", "Doing", "30/07/2026");
+                    Task t2 = new Task(0, 1, finalUserB.getId(), "Kết nối MongoDB", "Cấu hình Retrofit và Data API cho dự án", "Trung bình", "Tự do", "05/08/2026");
+
+                    db.taskDao().insert(t1);
+                    db.taskDao().insert(t2);
+
+                    // PUSH TASKS TO BACKEND NODEJS
+                    MongoApiService service = RetrofitClient.getMongoService();
+                    service.createTask(t1).enqueue(new Callback<Task>() {
+                        @Override
+                        public void onResponse(Call<Task> call, Response<Task> response) {
+                            android.util.Log.d("BACKEND", "Task 1 status: " + response.code());
+                        }
+
+                        @Override
+                        public void onFailure(Call<Task> call, Throwable t) {
+                        }
+                    });
+                    service.createTask(t2).enqueue(new Callback<Task>() {
+                        @Override
+                        public void onResponse(Call<Task> call, Response<Task> response) {
+                            android.util.Log.d("BACKEND", "Task 2 status: " + response.code());
+                        }
+
+                        @Override
+                        public void onFailure(Call<Task> call, Throwable t) {
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     private void initTasksTab() {
         binding.layoutTasks.rvTask.setLayoutManager(new LinearLayoutManager(this));
         taskAdapter = new TaskAdapter(new ArrayList<>(), this);
         binding.layoutTasks.rvTask.setAdapter(taskAdapter);
 
-        // Lấy dữ liệu thật từ Database
-        db.taskDao().getAllTasks().observe(this, tasks -> {
-            if (tasks != null) {
-                currentFullList = tasks;
-                taskAdapter.updateData(tasks);
-                
-                // Hiển thị màn hình trống nếu không có dữ liệu
-                if (tasks.isEmpty()) {
-                    binding.layoutTasks.layoutEmpty.setVisibility(View.VISIBLE);
-                    binding.layoutTasks.rvTask.setVisibility(View.GONE);
-                } else {
-                    binding.layoutTasks.layoutEmpty.setVisibility(View.GONE);
-                    binding.layoutTasks.rvTask.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt("USER_ID", -1);
 
-        // Xử lý Tìm kiếm
+        if (userId != -1) {
+            db.taskDao().getAllTasksForUser(userId).observe(this, tasks -> {
+                if (tasks != null) {
+                    currentFullList = tasks;
+                    taskAdapter.updateData(tasks);
+
+                    if (tasks.isEmpty()) {
+                        binding.layoutTasks.layoutEmpty.setVisibility(View.VISIBLE);
+                        binding.layoutTasks.rvTask.setVisibility(View.GONE);
+                    } else {
+                        binding.layoutTasks.layoutEmpty.setVisibility(View.GONE);
+                        binding.layoutTasks.rvTask.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }
+
         binding.layoutTasks.edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 taskAdapter.filter(s.toString());
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
-        // Xử lý Lọc Trạng thái
         binding.layoutTasks.chipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
                 taskAdapter.filterByStatus("Tất cả");
@@ -208,7 +278,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
         });
 
-        // Xử lý Lọc Độ ưu tiên
         if (binding.layoutTasks.chipGroupPriorityFilter != null) {
             binding.layoutTasks.chipGroupPriorityFilter.setOnCheckedStateChangeListener((group, checkedIds) -> {
                 if (checkedIds.isEmpty()) {
@@ -220,17 +289,16 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             });
         }
 
-        // Nút Sắp xếp
         binding.layoutTasks.btnSort.setOnClickListener(v -> {
             List<Task> sortedList = new ArrayList<>(currentFullList);
-            Collections.sort(sortedList, (t1, t2) -> t1.getTitle().compareToIgnoreCase(t2.getTitle()));
+            sortedList.sort((t1, t2) -> t1.getTitle().compareToIgnoreCase(t2.getTitle()));
             taskAdapter.updateData(sortedList);
             Toast.makeText(this, "Đã sắp xếp theo tên", Toast.LENGTH_SHORT).show();
         });
 
-        // Nút Thêm công việc
         binding.layoutTasks.fabAdd.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddTaskActivity.class));
+            Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -247,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void initProjectTab() {
-        // Gắn HomeFragment vào layoutProjects
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layoutProjects, new HomeFragment())
                 .commit();
@@ -275,10 +342,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             binding.layoutTasks.getRoot().setVisibility(View.VISIBLE);
         } else if (itemId == R.id.nav_team) {
             binding.layoutTeam.setVisibility(View.VISIBLE);
-            
-            // Xóa backstack nếu có
             getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.layoutTeam, new com.example.quan_ly_du_an.feature_project.ui.home.TeamProjectsFragment())
                     .commit();

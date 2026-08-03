@@ -1,6 +1,8 @@
 package com.example.quan_ly_du_an.activities;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -8,7 +10,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quan_ly_du_an.R;
+import com.example.quan_ly_du_an.api.MongoApiService;
+import com.example.quan_ly_du_an.api.RetrofitClient;
 import com.example.quan_ly_du_an.database.AppDatabase;
+import com.example.quan_ly_du_an.model.History;
 import com.example.quan_ly_du_an.model.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -95,10 +100,19 @@ public class AddTaskActivity extends AppCompatActivity {
             priority = ((Chip) findViewById(checkedPriorityId)).getText().toString();
         }
 
-        String status = "To Do";
+        String status = "Tự do";
         int checkedStatusId = chipGroupStatus.getCheckedChipId();
         if (checkedStatusId != View.NO_ID) {
             status = ((Chip) findViewById(checkedStatusId)).getText().toString();
+        }
+
+        // Lấy User ID của người đang đăng nhập
+        SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        int currentUserId = sharedPref.getInt("USER_ID", -1);
+
+        if (currentUserId == -1) {
+            Toast.makeText(this, "Lỗi: Không tìm thấy phiên đăng nhập!", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Task task = new Task();
@@ -108,14 +122,41 @@ public class AddTaskActivity extends AppCompatActivity {
         task.setPriority(priority);
         task.setStatus(status);
         task.setProjectId(1); 
-        task.setAssignedUserId(1);
+        task.setAssignedUserId(currentUserId);
 
         executorService.execute(() -> {
-            db.taskDao().insert(task);
-            runOnUiThread(() -> {
-                Toast.makeText(this, "Đã lưu công việc", Toast.LENGTH_SHORT).show();
-                finish();
-            });
+            try {
+                db.taskDao().insert(task);
+                android.util.Log.d("ADD_TASK", "Task inserted successfully in Room: " + title);
+                
+                // LƯU VÀO LỊCH SỬ
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+                String currentTime = sdf.format(new java.util.Date());
+                History history = new History("Tạo công việc mới", "Đã tạo công việc: " + title, currentTime, currentUserId);
+                db.historyDao().insert(history);
+                
+                // PUSH TO BACKEND NODEJS
+                RetrofitClient.getMongoService().createTask(task).enqueue(new retrofit2.Callback<Task>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<Task> call, retrofit2.Response<Task> response) {
+                        if (response.isSuccessful()) {
+                            android.util.Log.d("BACKEND", "Task pushed to NodeJS/MongoDB successfully!");
+                        }
+                    }
+                    @Override
+                    public void onFailure(retrofit2.Call<Task> call, Throwable t) {
+                        android.util.Log.e("BACKEND", "Failed to push task to NodeJS: " + t.getMessage());
+                    }
+                });
+
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Đã lưu công việc", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            } catch (Exception e) {
+                android.util.Log.e("ADD_TASK", "Error inserting task", e);
+                runOnUiThread(() -> Toast.makeText(this, "Lỗi khi lưu: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
         });
     }
 

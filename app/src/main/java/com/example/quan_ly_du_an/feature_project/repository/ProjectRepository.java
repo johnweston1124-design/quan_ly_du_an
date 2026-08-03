@@ -7,6 +7,7 @@ import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.database.ProjectDao;
 import com.example.quan_ly_du_an.database.ProjectMemberDao;
 import com.example.quan_ly_du_an.database.UserDao;
+import com.example.quan_ly_du_an.model.History;
 import com.example.quan_ly_du_an.model.MemberWithRole;
 import com.example.quan_ly_du_an.model.Project;
 import com.example.quan_ly_du_an.model.ProjectMember;
@@ -87,6 +88,13 @@ public class ProjectRepository {
                 if (id != -1) {
                     ProjectMember adminMember = new ProjectMember(id, creatorUserId, "ADMIN");
                     projectMemberDao.insertProjectMember(adminMember);
+                    
+                    // LƯU VÀO LỊCH SỬ
+                    java.text.SimpleDateFormat timeSdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+                    String currentTime = timeSdf.format(new java.util.Date());
+                    History history = new History("Tạo dự án mới", "Đã tạo dự án: " + title, currentTime, (int) creatorUserId);
+                    roomDb.historyDao().insert(history);
+
                     if (onSuccess != null) onSuccess.run();
                 } else if (onError != null) {
                     onError.onError("Lỗi khi tạo dự án trong Database");

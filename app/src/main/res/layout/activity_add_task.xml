@@ -197,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:checkable="true"
                     android:checked="true"
-                    android:text="To Do"/>
+                    android:text="Tự do"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDoing"
