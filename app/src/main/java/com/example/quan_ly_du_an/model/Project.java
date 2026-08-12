@@ -1,27 +1,13 @@
 package com.example.quan_ly_du_an.model;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "projects")
 public class Project {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "project_id")
     private long projectId;
-
     private String title;
     private String description;
     private String status;
-    
-    @ColumnInfo(name = "start_date")
     private String startDate;
-    
-    @ColumnInfo(name = "end_date")
     private String endDate;
-    
-    @ColumnInfo(name = "expected_members")
     private int expectedMembers;
 
     public Project(String title, String description, String status, String startDate, String endDate, int expectedMembers) {

@@ -50,6 +50,12 @@ public class TaskActivity extends AppCompatActivity
         setupEvent();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        observeTasks();
+    }
+
     private void initView() {
         rvTask = findViewById(R.id.rvTask);
         fabAdd = findViewById(R.id.fabAdd);

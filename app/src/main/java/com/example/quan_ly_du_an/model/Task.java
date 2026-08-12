@@ -1,18 +1,8 @@
 package com.example.quan_ly_du_an.model;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import com.google.gson.annotations.SerializedName;
-
-@Entity(tableName = "tasks")
 public class Task {
 
-    @PrimaryKey(autoGenerate = true)
     private int taskId;
-    
-    @SerializedName("_id")
-    private String mongoId;
-
     private int projectId;
     private int assignedUserId;
 
@@ -45,14 +35,6 @@ public class Task {
 
     public void setTaskId(int taskId) {
         this.taskId = taskId;
-    }
-
-    public String getMongoId() {
-        return mongoId;
-    }
-
-    public void setMongoId(String mongoId) {
-        this.mongoId = mongoId;
     }
 
     public int getProjectId() {

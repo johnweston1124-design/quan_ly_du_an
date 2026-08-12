@@ -19,17 +19,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ProjectRepository {
-    private final AppDatabase roomDb;
+    private final AppDatabase db;
     private final ProjectDao projectDao;
     private final ProjectMemberDao projectMemberDao;
     private final UserDao userDao;
     private final ExecutorService executorService;
 
     public ProjectRepository(Application application) {
-        this.roomDb = AppDatabase.getDatabase(application);
-        this.projectDao = roomDb.projectDao();
-        this.projectMemberDao = roomDb.projectMemberDao();
-        this.userDao = roomDb.userDao();
+        this.db = AppDatabase.getDatabase(application);
+        this.projectDao = db.projectDao();
+        this.projectMemberDao = db.projectMemberDao();
+        this.userDao = db.userDao();
         this.executorService = Executors.newFixedThreadPool(4);
     }
 
@@ -38,7 +38,14 @@ public class ProjectRepository {
     public LiveData<List<ProjectWithRole>> getProjectsForUser(long userId) {
         MutableLiveData<List<ProjectWithRole>> liveData = new MutableLiveData<>();
         executorService.execute(() -> {
-            List<ProjectWithRole> data = projectDao.getProjectsForUser(userId);
+            User user = userDao.getUserById((int) userId);
+            boolean isAdmin = (userId == 999) || (user != null && "ADMIN".equalsIgnoreCase(user.getRole()));
+            List<ProjectWithRole> data;
+            if (isAdmin) {
+                data = projectDao.getAllProjectsForAdmin();
+            } else {
+                data = projectDao.getProjectsForUser(userId);
+            }
             liveData.postValue(data);
         });
         return liveData;
@@ -99,7 +106,7 @@ public class ProjectRepository {
                     java.text.SimpleDateFormat timeSdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
                     String currentTime = timeSdf.format(new java.util.Date());
                     History history = new History("Tạo dự án mới", "Đã tạo dự án: " + title, currentTime, (int) creatorUserId);
-                    roomDb.historyDao().insert(history);
+                    db.historyDao().insert(history);
 
                     if (onSuccess != null) onSuccess.run();
                 } else if (onError != null) {
@@ -116,8 +123,13 @@ public class ProjectRepository {
 
     public void deleteProject(long projectId, long currentUserId, Runnable onSuccess, OnError onError) {
         executorService.execute(() -> {
+            com.example.quan_ly_du_an.model.User user = userDao.getUserById((int) currentUserId);
+            boolean isSystemAdmin = (currentUserId == 999) || (user != null && "ADMIN".equalsIgnoreCase(user.getRole()));
+
             String role = projectMemberDao.getUserRoleSync(projectId, currentUserId);
-            if (!"ADMIN".equalsIgnoreCase(role)) {
+            boolean isProjectAdmin = "ADMIN".equalsIgnoreCase(role);
+
+            if (!isSystemAdmin && !isProjectAdmin) {
                 if (onError != null) onError.onError("Chỉ ADMIN mới có quyền xóa dự án!");
                 return;
             }
@@ -125,7 +137,7 @@ public class ProjectRepository {
             int rowsDeleted = projectDao.deleteProject(projectId);
             if (rowsDeleted > 0) {
                 try {
-                    roomDb.query("DELETE FROM tasks WHERE projectId = ?", new Object[]{projectId});
+                    db.execQuery("DELETE FROM tasks WHERE projectId = ?", new Object[]{projectId});
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -145,7 +157,7 @@ public class ProjectRepository {
             if (data != null) {
                 for (MemberWithRole member : data) {
                     int count = 0;
-                    try (android.database.Cursor cursor = roomDb.query(
+                    try (android.database.Cursor cursor = db.query(
                             "SELECT COUNT(*) FROM tasks WHERE projectId = ? AND assignedUserId = ?",
                             new Object[]{projectId, member.userId})) {
                         if (cursor != null && cursor.moveToFirst()) {
@@ -193,7 +205,7 @@ public class ProjectRepository {
     public void removeMember(long projectId, long userId, Runnable onSuccess, OnError onError) {
         executorService.execute(() -> {
             int count = 0;
-            try (android.database.Cursor cursor = roomDb.query(
+            try (android.database.Cursor cursor = db.query(
                     "SELECT COUNT(*) FROM tasks WHERE projectId = ? AND assignedUserId = ? AND status != 'Hoàn thành'",
                     new Object[]{projectId, userId})) {
                 if (cursor != null && cursor.moveToFirst()) {
@@ -214,6 +226,10 @@ public class ProjectRepository {
     }
 
     public String getUserRoleSync(long projectId, long userId) {
+        com.example.quan_ly_du_an.model.User user = userDao.getUserById((int) userId);
+        if (userId == 999 || (user != null && "ADMIN".equalsIgnoreCase(user.getRole()))) {
+            return "ADMIN";
+        }
         String role = projectMemberDao.getUserRoleSync(projectId, userId);
         return role != null ? role : "MEMBER";
     }

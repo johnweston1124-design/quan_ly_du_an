@@ -1,18 +1,8 @@
 package com.example.quan_ly_du_an.model;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import com.google.gson.annotations.SerializedName;
-
-@Entity(tableName = "users")
 public class User {
 
-    @PrimaryKey(autoGenerate = true)
     private int id;
-
-    @SerializedName("_id")
-    private String mongoId; // Dùng để liên kết với MongoDB
-
     private String name;
     private String email;
     private String password;
@@ -27,9 +17,6 @@ public class User {
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-
-    public String getMongoId() { return mongoId; }
-    public void setMongoId(String mongoId) { this.mongoId = mongoId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

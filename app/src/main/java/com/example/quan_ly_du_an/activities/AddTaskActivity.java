@@ -10,8 +10,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quan_ly_du_an.R;
-import com.example.quan_ly_du_an.api.MongoApiService;
-import com.example.quan_ly_du_an.api.RetrofitClient;
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.model.History;
 import com.example.quan_ly_du_an.model.Task;
@@ -76,8 +74,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 },
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        );
+                calendar.get(Calendar.DAY_OF_MONTH));
         dialog.show();
     }
 
@@ -121,33 +118,21 @@ public class AddTaskActivity extends AppCompatActivity {
         task.setDeadline(deadline);
         task.setPriority(priority);
         task.setStatus(status);
-        task.setProjectId(1); 
+        task.setProjectId(1);
         task.setAssignedUserId(currentUserId);
 
         executorService.execute(() -> {
             try {
                 db.taskDao().insert(task);
-                android.util.Log.d("ADD_TASK", "Task inserted successfully in Room: " + title);
-                
+                android.util.Log.d("ADD_TASK", "Task inserted successfully: " + title);
+
                 // LƯU VÀO LỊCH SỬ
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm",
+                        java.util.Locale.getDefault());
                 String currentTime = sdf.format(new java.util.Date());
-                History history = new History("Tạo công việc mới", "Đã tạo công việc: " + title, currentTime, currentUserId);
+                History history = new History("Tạo công việc mới", "Đã tạo công việc: " + title, currentTime,
+                        currentUserId);
                 db.historyDao().insert(history);
-                
-                // PUSH TO BACKEND NODEJS
-                RetrofitClient.getMongoService().createTask(task).enqueue(new retrofit2.Callback<Task>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<Task> call, retrofit2.Response<Task> response) {
-                        if (response.isSuccessful()) {
-                            android.util.Log.d("BACKEND", "Task pushed to NodeJS/MongoDB successfully!");
-                        }
-                    }
-                    @Override
-                    public void onFailure(retrofit2.Call<Task> call, Throwable t) {
-                        android.util.Log.e("BACKEND", "Failed to push task to NodeJS: " + t.getMessage());
-                    }
-                });
 
                 runOnUiThread(() -> {
                     Toast.makeText(this, "Đã lưu công việc", Toast.LENGTH_SHORT).show();

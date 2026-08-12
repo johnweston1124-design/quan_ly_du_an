@@ -1,11 +1,6 @@
 package com.example.quan_ly_du_an.model;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "history")
 public class History {
-    @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
     private String description;

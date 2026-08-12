@@ -1,13 +1,14 @@
 package com.example.quan_ly_du_an.activities;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.model.User;
-import com.example.quan_ly_du_an.api.MongoApiService;
-import com.example.quan_ly_du_an.api.RetrofitClient;
 import com.example.quan_ly_du_an.databinding.ActivityRegisterBinding;
 
 import java.util.concurrent.ExecutorService;
@@ -76,32 +77,32 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Đẩy xuống Background Thread để thao tác với Room Database
+        // Đẩy xuống Background Thread để thao tác với Database
         executorService.execute(() -> {
-            // Đã khởi tạo User đầy đủ tham số
             User newUser = new User(username, email, password);
 
             try {
-                // SỬA LỖI: Gọi đúng hàm insertUser
                 database.userDao().insertUser(newUser);
 
-                // ĐẨY LÊN BACKEND NODEJS
-                RetrofitClient.getMongoService().registerUser(newUser).enqueue(new retrofit2.Callback<User>() {
-                    @Override
-                    public void onResponse(retrofit2.Call<User> call, retrofit2.Response<User> response) {
-                        if (response.isSuccessful()) {
-                            android.util.Log.d("BACKEND", "User saved to MongoDB via NodeJS!");
-                        }
-                    }
-                    @Override
-                    public void onFailure(retrofit2.Call<User> call, Throwable t) {
-                        android.util.Log.e("BACKEND", "Failed to connect to NodeJS: " + t.getMessage());
-                    }
-                });
+                // Lấy user vừa insert để lấy ID chính xác
+                User createdUser = database.userDao().getUserByEmail(email);
+                int userId = createdUser != null ? createdUser.getId() : newUser.getId();
 
                 runOnUiThread(() -> {
-                    Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                    finish(); // Quay lại màn hình Login sau khi đăng ký thành công
+                    // Lưu phiên đăng nhập tự động
+                    SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("IS_LOGGED_IN", true);
+                    editor.putInt("USER_ID", userId);
+                    editor.apply();
+
+                    Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Đang chuyển đến màn hình chính...", Toast.LENGTH_SHORT).show();
+
+                    // Chuyển thẳng sang MainActivity và xóa stack trước đó
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {

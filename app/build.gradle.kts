@@ -39,26 +39,15 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp.logging.interceptor)
     
     // WorkManager
     implementation("androidx.work:work-runtime:2.11.2")
-    
-    // Room
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
 
     // Lifecycle
     val lifecycle_version = "2.8.7"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-
-    // MongoDB Atlas SDK (Realm)
-    implementation("io.realm.kotlin:library-base:1.11.0")
 
     // Google Sign In
     implementation("com.google.android.gms:play-services-auth:21.2.0")
