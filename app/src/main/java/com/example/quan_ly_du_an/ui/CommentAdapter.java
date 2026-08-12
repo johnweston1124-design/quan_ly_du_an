@@ -16,8 +16,17 @@ import java.util.Locale;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private List<Comment> commentList = new ArrayList<>();
+    private java.util.Map<Integer, String> userNamesMap = new java.util.HashMap<>();
+
+    public void setUserMap(java.util.Map<Integer, String> map) {
+        if (map != null) {
+            this.userNamesMap = map;
+            notifyDataSetChanged();
+        }
+    }
+
     public void submitList(List<Comment> comments) {
-        this.commentList = comments;
+        this.commentList = comments != null ? comments : new ArrayList<>();
         notifyDataSetChanged();
     }
     @NonNull
@@ -30,7 +39,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment currentComment = commentList.get(position);
 
-        holder.tvUserName.setText("User #" + currentComment.userId);
+        String userName = userNamesMap.get(currentComment.userId);
+        if (userName == null || userName.isEmpty()) {
+            if (currentComment.userId == 999) {
+                userName = "Quản trị viên hệ thống";
+            } else {
+                userName = "Thành viên #" + currentComment.userId;
+            }
+        }
+        holder.tvUserName.setText(userName);
         holder.tvContent.setText(currentComment.content);
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault());

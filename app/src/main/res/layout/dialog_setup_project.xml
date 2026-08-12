@@ -9,26 +9,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFFFFF"
+        android:background="@color/bg_surface"
         android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm dự án mới"
+            android:text="@string/txt_them_du_an_moi"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#212121"
+            android:textColor="@color/text_primary"
             android:layout_marginBottom="24dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tên dự án (Bắt buộc)"
-            android:textColorHint="#757575"
-            app:boxStrokeColor="#757575"
-            app:hintTextColor="#212121"
+            android:hint="@string/txt_ten_du_an_bat_buoc"
+            android:textColorHint="@color/text_secondary"
+            app:boxStrokeColor="@color/input_border"
+            app:hintTextColor="@color/text_primary"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -37,7 +37,7 @@
                 android:id="@+id/edtProjectTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#212121" />
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -45,10 +45,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Mô tả mục tiêu dự án"
-            android:textColorHint="#757575"
-            app:boxStrokeColor="#757575"
-            app:hintTextColor="#212121"
+            android:hint="@string/txt_mo_ta_muc_tieu_du_an"
+            android:textColorHint="@color/text_secondary"
+            app:boxStrokeColor="@color/input_border"
+            app:hintTextColor="@color/text_primary"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -59,7 +59,7 @@
                 android:layout_height="120dp"
                 android:gravity="top"
                 android:lines="3"
-                android:textColor="#212121" />
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -68,10 +68,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Số lượng thành viên dự kiến"
-            android:textColorHint="#757575"
-            app:boxStrokeColor="#757575"
-            app:hintTextColor="#212121"
+            android:hint="@string/txt_so_luong_thanh_vien_"
+            android:textColorHint="@color/text_secondary"
+            app:boxStrokeColor="@color/input_border"
+            app:hintTextColor="@color/text_primary"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:text="5"
-                android:textColor="#212121" />
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -91,10 +91,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Trạng thái ban đầu"
-            android:textColorHint="#757575"
-            app:boxStrokeColor="#757575"
-            app:hintTextColor="#212121"
+            android:hint="@string/txt_trang_thai_ban_au"
+            android:textColorHint="@color/text_secondary"
+            app:boxStrokeColor="@color/input_border"
+            app:hintTextColor="@color/text_primary"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -105,8 +105,8 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:clickable="true"
-                android:text="Đang thực hiện"
-                android:textColor="#212121" />
+                android:text="@string/txt_ang_thuc_hien"
+                android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -121,10 +121,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                android:hint="Ngày bắt đầu"
-                android:textColorHint="#757575"
-                app:boxStrokeColor="#757575"
-                app:hintTextColor="#212121"
+                android:hint="@string/txt_ngay_bat_au"
+                android:textColorHint="@color/text_secondary"
+                app:boxStrokeColor="@color/input_border"
+                app:hintTextColor="@color/text_primary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:clickable="true"
-                    android:textColor="#212121" />
+                    android:textColor="@color/text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -144,10 +144,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
-                android:hint="Ngày kết thúc"
-                android:textColorHint="#757575"
-                app:boxStrokeColor="#757575"
-                app:hintTextColor="#212121"
+                android:hint="@string/txt_ngay_ket_thuc"
+                android:textColorHint="@color/text_secondary"
+                app:boxStrokeColor="@color/input_border"
+                app:hintTextColor="@color/text_primary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -158,16 +158,16 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:clickable="true"
-                    android:textColor="#212121" />
+                    android:textColor="@color/text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="* Bạn sẽ được gán làm ADMIN dự án này."
+            android:text="@string/txt_ban_se_uoc_gan_lam_a"
             android:textSize="12sp"
-            android:textColor="#757575"
+            android:textColor="@color/text_secondary"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp"/>
 
@@ -175,10 +175,10 @@
             android:id="@+id/btnCreateProject"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="TẠO DỰ ÁN"
+            android:text="@string/txt_tao_du_an_1"
             android:textStyle="bold"
             app:cornerRadius="16dp"
-            android:backgroundTint="#FF4B63"
+            android:backgroundTint="@color/danger"
             android:textColor="@android:color/white"/>
 
     </LinearLayout>

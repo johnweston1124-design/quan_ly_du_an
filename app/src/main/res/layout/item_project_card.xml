@@ -8,7 +8,7 @@
     app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeColor="#E0E0E0"
+    app:strokeColor="@color/divider"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -28,8 +28,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tên dự án"
-                android:textColor="#212121"
+                android:text="@string/txt_ten_du_an"
+                android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="MEMBER"
+                android:text="@string/txt_member"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -51,22 +51,22 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="Mô tả dự án..."
-            android:textColor="#757575"
+            android:text="@string/txt_mo_ta_du_an"
+            android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="12dp"
-            android:background="#F5F5F5" />
+            android:background="@color/bg_main" />
 
         <TextView
             android:id="@+id/tvProjectStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đang thực hiện"
-            android:textColor="#4CAF50"
+            android:text="@string/txt_ang_thuc_hien"
+            android:textColor="@color/success"
             android:textSize="13sp"
             android:textStyle="bold"/>
     </LinearLayout>

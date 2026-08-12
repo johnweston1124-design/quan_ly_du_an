@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/bg_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:paddingTop="48dp"
             android:paddingBottom="16dp"
             android:paddingHorizontal="16dp"
-            android:background="#FFFFFF">
+            android:background="@color/bg_surface">
 
             <ImageButton
                 android:id="@+id/btnBack"
@@ -27,23 +27,23 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_arrow_back"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#1A1C1E"
+                app:tint="@color/text_primary"
                 android:contentDescription="Quay lại" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Đổi Mật Khẩu"
+                android:text="@string/txt_oi_mat_khau"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#1A1C1E" />
+                android:textColor="@color/text_primary" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#EEEEEE"/>
+            android:background="@color/divider"/>
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                     android:layout_marginBottom="24dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="#E3F2FD"
+                    app:cardBackgroundColor="@color/primary_light"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -85,9 +85,9 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="14dp"
-                            android:text="Để bảo vệ tài khoản, hãy đặt mật khẩu mới mạnh có ít nhất 6 ký tự và không chia sẻ cho người khác."
+                            android:text="@string/txt_e_bao_ve_tai_khoan_h"
                             android:textSize="13sp"
-                            android:textColor="#0D47A1"
+                            android:textColor="@color/primary_dark"
                             android:lineSpacingExtra="2dp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -96,10 +96,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="THÔNG TIN BẢO MẬT"
+                    android:text="@string/txt_thong_tin_bao_mat"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:textColor="#74777F"
+                    android:textColor="@color/text_secondary"
                     android:layout_marginStart="4dp"
                     android:layout_marginBottom="12dp" />
 
@@ -110,7 +110,7 @@
                     android:layout_marginBottom="32dp"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="@color/bg_surface"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -124,11 +124,11 @@
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Mật khẩu hiện tại"
-                            android:textColorHint="#74777F"
+                            android:hint="@string/txt_mat_khau_hien_tai"
+                            android:textColorHint="@color/text_secondary"
                             app:passwordToggleEnabled="true"
                             app:startIconDrawable="@android:drawable/ic_lock_lock"
-                            app:startIconTint="#1E88E5"
+                            app:startIconTint="@color/primary"
                             app:boxCornerRadiusTopStart="12dp"
                             app:boxCornerRadiusTopEnd="12dp"
                             app:boxCornerRadiusBottomStart="12dp"
@@ -139,7 +139,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:textColor="#1A1C1E"
+                                android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -149,11 +149,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:hint="Mật khẩu mới"
-                            android:textColorHint="#74777F"
+                            android:hint="@string/txt_mat_khau_moi"
+                            android:textColorHint="@color/text_secondary"
                             app:passwordToggleEnabled="true"
                             app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                            app:startIconTint="#1E88E5"
+                            app:startIconTint="@color/primary"
                             app:boxCornerRadiusTopStart="12dp"
                             app:boxCornerRadiusTopEnd="12dp"
                             app:boxCornerRadiusBottomStart="12dp"
@@ -164,7 +164,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:textColor="#1A1C1E"
+                                android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -174,11 +174,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:hint="Xác nhận mật khẩu mới"
-                            android:textColorHint="#74777F"
+                            android:hint="@string/txt_xac_nhan_mat_khau_mo"
+                            android:textColorHint="@color/text_secondary"
                             app:passwordToggleEnabled="true"
                             app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                            app:startIconTint="#1E88E5"
+                            app:startIconTint="@color/primary"
                             app:boxCornerRadiusTopStart="12dp"
                             app:boxCornerRadiusTopEnd="12dp"
                             app:boxCornerRadiusBottomStart="12dp"
@@ -189,7 +189,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:inputType="textPassword"
-                                android:textColor="#1A1C1E"
+                                android:textColor="@color/text_primary"
                                 android:textSize="15sp" />
                         </com.google.android.material.textfield.TextInputLayout>
 
@@ -202,12 +202,12 @@
                     style="@style/Widget.Material3.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:text="XÁC NHẬN ĐỔI MẬT KHẨU"
+                    android:text="@string/txt_xac_nhan_oi_mat_khau"
                     android:textStyle="bold"
                     android:textSize="15sp"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/bg_surface"
                     app:cornerRadius="16dp"
-                    android:backgroundTint="#43A047" />
+                    android:backgroundTint="@color/success" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

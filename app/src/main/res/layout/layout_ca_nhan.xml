@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="@color/bg_main">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
                         android:src="@drawable/ic_person"
                         android:background="@drawable/circle_background"
                         android:padding="18dp"
-                        app:tint="#1565C0" />
+                        app:tint="@color/primary_dark" />
                 </RelativeLayout>
 
                 <!-- Tên User -->
@@ -46,10 +46,10 @@
                     android:id="@+id/tvProfileName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nguyễn Văn A"
+                    android:text="@string/txt_nguyen_van_a"
                     android:textSize="22sp"
                     android:textStyle="bold"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/bg_surface"
                     android:layout_marginTop="12dp"/>
 
                 <!-- Email -->
@@ -57,9 +57,9 @@
                     android:id="@+id/tvProfileEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="a.nguyen@email.com"
+                    android:text="@string/txt_a_nguyen_email_com"
                     android:textSize="14sp"
-                    android:textColor="#E3F2FD"
+                    android:textColor="@color/primary_light"
                     android:layout_marginTop="2dp"/>
 
                 <!-- Badge Vai trò -->
@@ -67,9 +67,9 @@
                     android:id="@+id/tvProfileRole"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⚡ Thành viên chính thức"
+                    android:text="@string/txt_thanh_vien_chinh_thu"
                     android:textSize="12sp"
-                    android:textColor="#0D47A1"
+                    android:textColor="@color/primary_dark"
                     android:textStyle="bold"
                     android:background="@drawable/bg_badge_role"
                     android:paddingHorizontal="14dp"
@@ -81,9 +81,9 @@
                     android:id="@+id/tvProfileStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🟢 Đang hoạt động • 🎯 Quyết tâm hoàn thành đúng hạn"
+                    android:text="@string/txt_ang_hoat_ong_quyet_t"
                     android:textSize="12sp"
-                    android:textColor="#E3F2FD"
+                    android:textColor="@color/primary_light"
                     android:layout_marginTop="8dp"/>
 
             </LinearLayout>
@@ -98,14 +98,14 @@
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/bg_surface"
             app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="4"
+                android:weightSum="2"
                 android:paddingVertical="16dp">
 
                 <!-- Stat 1: Dự án -->
@@ -123,14 +123,14 @@
                         android:text="0"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="#1E88E5"/>
+                        android:textColor="@color/primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Dự án"
+                        android:text="@string/txt_du_an"
                         android:textSize="11sp"
-                        android:textColor="#74777F"
+                        android:textColor="@color/text_secondary"
                         android:layout_marginTop="2dp"/>
                 </LinearLayout>
 
@@ -138,7 +138,7 @@
                     android:layout_width="1dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#EEEEEE"/>
+                    android:background="@color/divider"/>
 
                 <!-- Stat 2: Việc xong -->
                 <LinearLayout
@@ -155,199 +155,29 @@
                         android:text="0"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="#43A047"/>
+                        android:textColor="@color/success"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Việc xong"
+                        android:text="@string/txt_viec_xong"
                         android:textSize="11sp"
-                        android:textColor="#74777F"
-                        android:layout_marginTop="2dp"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="#EEEEEE"/>
-
-                <!-- Stat 3: Thành tích -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tvProfileStatScore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="850 pts"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#E65100"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Điểm thưởng"
-                        android:textSize="11sp"
-                        android:textColor="#74777F"
-                        android:layout_marginTop="2dp"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="28dp"
-                    android:layout_gravity="center_vertical"
-                    android:background="#EEEEEE"/>
-
-                <!-- Stat 4: Hiệu suất -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/tvProfileStatEfficiency"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100%"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#FB8C00"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hiệu suất"
-                        android:textSize="11sp"
-                        android:textColor="#74777F"
+                        android:textColor="@color/text_secondary"
                         android:layout_marginTop="2dp"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Nhóm 1: Thành tích & Báo cáo -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="THÀNH TÍCH &amp; BÁO CÁO"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="#74777F"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="8dp"/>
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="1dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/btnThanhTich"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground">
-
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_quick_action_btn"
-                        android:gravity="center"
-                        android:text="🏆"
-                        android:textSize="18sp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="14dp"
-                        android:text="Bảng thành tích &amp; Huy hiệu"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="›"
-                        android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#F0F0F0"
-                    android:layout_marginHorizontal="16dp"/>
-
-                <LinearLayout
-                    android:id="@+id/btnBaoCao"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground">
-
-                    <TextView
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/bg_quick_action_btn"
-                        android:gravity="center"
-                        android:text="📈"
-                        android:textSize="18sp"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="14dp"
-                        android:text="Báo cáo tiến độ chi tiết"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="›"
-                        android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
         <!-- Nhóm 2: Tài khoản & Bảo mật -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TÀI KHOẢN &amp; BẢO MẬT"
+            android:text="@string/txt_tai_khoan_amp_bao_ma"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="#74777F"
+            android:textColor="@color/text_secondary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"/>
 
@@ -358,7 +188,7 @@
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="1dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/bg_surface"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -390,23 +220,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Thông tin cá nhân"
+                        android:text="@string/txt_thong_tin_ca_nhan"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="›"
                         android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -433,23 +263,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Đổi mật khẩu &amp; Bảo mật"
+                        android:text="@string/txt_oi_mat_khau_amp_bao_"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="›"
                         android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -476,17 +306,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Nhật ký đăng nhập"
+                        android:text="@string/txt_nhat_ky_ang_nhap"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="›"
                         android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -495,10 +325,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TÙY CHỈNH &amp; GIAO DIỆN"
+            android:text="@string/txt_tuy_chinh_amp_giao_d"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="#74777F"
+            android:textColor="@color/text_secondary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"/>
 
@@ -509,7 +339,7 @@
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="1dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/bg_surface"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -541,23 +371,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Lịch sử dự án &amp; Báo cáo"
+                        android:text="@string/txt_lich_su_du_an_amp_ba"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="›"
                         android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -584,23 +414,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Cài đặt thông báo"
+                        android:text="@string/txt_cai_at_thong_bao"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bật"
+                        android:text="@string/txt_bat"
                         android:textSize="13sp"
-                        android:textColor="#43A047"/>
+                        android:textColor="@color/success"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -627,24 +457,24 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Ngôn ngữ ứng dụng"
+                        android:text="@string/txt_ngon_ngu_ung_dung"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:id="@+id/tvCurrentLanguage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tiếng Việt"
+                        android:text="@string/txt_tieng_viet"
                         android:textSize="13sp"
-                        android:textColor="#74777F"/>
+                        android:textColor="@color/text_secondary"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -671,17 +501,18 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Chế độ tối (Dark Mode)"
+                        android:text="@string/txt_che_o_toi_dark_mode"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
+                        android:id="@+id/tvCurrentDarkMode"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tắt"
+                        android:text="@string/txt_tat"
                         android:textSize="13sp"
-                        android:textColor="#74777F"/>
+                        android:textColor="@color/text_secondary"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -690,10 +521,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HỆ THỐNG &amp; HỖ TRỢ"
+            android:text="@string/txt_he_thong_amp_ho_tro"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="#74777F"
+            android:textColor="@color/text_secondary"
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="8dp"/>
 
@@ -704,7 +535,7 @@
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="1dp"
-            app:cardBackgroundColor="#FFFFFF"
+            app:cardBackgroundColor="@color/bg_surface"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -736,23 +567,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Trợ giúp &amp; Phản hồi"
+                        android:text="@string/txt_tro_giup_amp_phan_ho"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="›"
                         android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -779,23 +610,23 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Điều khoản &amp; Chính sách"
+                        android:text="@string/txt_ieu_khoan_amp_chinh_"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="›"
                         android:textSize="20sp"
-                        android:textColor="#C4C6D0"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="#F0F0F0"
+                    android:background="@color/divider"
                     android:layout_marginHorizontal="16dp"/>
 
                 <LinearLayout
@@ -814,7 +645,7 @@
                         android:layout_height="36dp"
                         android:background="@drawable/bg_quick_action_btn"
                         android:gravity="center"
-                        android:text="ℹ️"
+                        android:text="@string/txt_i"
                         android:textSize="18sp"/>
 
                     <TextView
@@ -822,17 +653,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="14dp"
-                        android:text="Thông tin ứng dụng"
+                        android:text="@string/txt_thong_tin_ung_dung"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1C1E"/>
+                        android:textColor="@color/text_primary"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="v1.0.0"
+                        android:text="@string/txt_v1_0_0"
                         android:textSize="13sp"
-                        android:textColor="#74777F"/>
+                        android:textColor="@color/text_secondary"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -844,14 +675,14 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginHorizontal="20dp"
-            android:text="ĐĂNG XUẤT"
-            android:textColor="#FF4B63"
+            android:text="@string/txt_ang_xuat"
+            android:textColor="@color/danger"
             android:textStyle="bold"
             android:textSize="15sp"
             app:cornerRadius="16dp"
-            android:backgroundTint="#FFEBEF"
+            android:backgroundTint="@color/danger_light"
             app:icon="@android:drawable/ic_lock_power_off"
-            app:iconTint="#FF4B63"
+            app:iconTint="@color/danger"
             app:iconGravity="textStart"/>
 
     </LinearLayout>

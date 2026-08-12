@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        com.example.quan_ly_du_an.utils.ThemeAndLocaleManager.applyThemeAndLocale(this);
         super.onCreate(savedInstanceState);
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
@@ -143,7 +144,21 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (email.equals("admin") && password.equals("123456")) {
-            saveSessionAndNavigate(999);
+            executorService.execute(() -> {
+                User adminUser = database.userDao().getUserById(999);
+                if (adminUser == null) {
+                    adminUser = new User("Quản trị viên hệ thống", "admin@system.com", "123456");
+                    adminUser.setId(999);
+                    adminUser.setRole("Admin");
+                    database.userDao().insertUser(adminUser);
+                } else if ("Demo User".equals(adminUser.getName()) || (adminUser.getEmail() != null && adminUser.getEmail().contains("demo999"))) {
+                    adminUser.setName("Quản trị viên hệ thống");
+                    adminUser.setEmail("admin@system.com");
+                    adminUser.setRole("Admin");
+                    database.userDao().updateUser(adminUser);
+                }
+                runOnUiThread(() -> saveSessionAndNavigate(999));
+            });
             return;
         }
 

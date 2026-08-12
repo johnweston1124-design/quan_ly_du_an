@@ -19,8 +19,8 @@
             android:id="@+id/tvHistoryTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tiêu đề hoạt động"
-            android:textColor="#212121"
+            android:text="@string/txt_tieu_e_hoat_ong"
+            android:textColor="@color/text_primary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -29,8 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Mô tả chi tiết hoạt động..."
-            android:textColor="#757575"
+            android:text="@string/txt_mo_ta_chi_tiet_hoat_"
+            android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_gravity="end"
             android:layout_marginTop="8dp"
             android:text="2026-08-02 20:00"
-            android:textColor="#BDBDBD"
+            android:textColor="@color/text_muted"
             android:textSize="12sp" />
 
     </LinearLayout>

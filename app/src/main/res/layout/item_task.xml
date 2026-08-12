@@ -9,7 +9,7 @@
     app:cardCornerRadius="18dp"
     app:cardElevation="3dp"
     app:strokeWidth="1dp"
-    app:strokeColor="#EAEAEA">
+    app:strokeColor="@color/divider">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -20,10 +20,10 @@
             android:id="@+id/txtTaskTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Thiết kế giao diện Login"
+            android:text="@string/txt_thiet_ke_giao_dien_l"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#212121"
+            android:textColor="@color/text_primary"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -33,8 +33,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="Thiết kế giao diện đăng nhập cho ứng dụng."
-            android:textColor="#757575"
+            android:text="@string/txt_thiet_ke_giao_dien_a"
+            android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:maxLines="2"
             android:ellipsize="end"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:text="20/07/2026"
             android:textSize="13sp"
-            android:textColor="#616161"
+            android:textColor="@color/text_secondary"
             android:layout_marginStart="6dp"
             app:layout_constraintStart_toEndOf="@id/imgDeadline"
             app:layout_constraintTop_toTopOf="@id/imgDeadline"/>
@@ -77,9 +77,9 @@
             android:id="@+id/txtUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nguyễn Văn A"
+            android:text="@string/txt_nguyen_van_a"
             android:textSize="13sp"
-            android:textColor="#616161"
+            android:textColor="@color/text_secondary"
             android:layout_marginStart="6dp"
             app:layout_constraintStart_toEndOf="@id/imgUser"
             app:layout_constraintTop_toTopOf="@id/imgUser"/>
@@ -88,9 +88,9 @@
             android:id="@+id/chipPriority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cao"
+            android:text="@string/txt_cao"
             android:textColor="@android:color/white"
-            app:chipBackgroundColor="#F44336"
+            app:chipBackgroundColor="@color/danger"
             app:layout_constraintTop_toBottomOf="@id/imgDeadline"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp"/>
@@ -99,9 +99,9 @@
             android:id="@+id/chipStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đang làm"
+            android:text="@string/txt_ang_lam"
             android:textColor="@android:color/white"
-            app:chipBackgroundColor="#FF9800"
+            app:chipBackgroundColor="@color/warning"
             app:layout_constraintTop_toTopOf="@id/chipPriority"
             app:layout_constraintEnd_toEndOf="parent"/>
 

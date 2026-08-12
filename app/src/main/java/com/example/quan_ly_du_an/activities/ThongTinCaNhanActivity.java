@@ -58,16 +58,16 @@ public class ThongTinCaNhanActivity extends AppCompatActivity {
             currentUser = database.userDao().getUserById(userId);
 
             runOnUiThread(() -> {
-                if (currentUser != null) {
+                if (userId == 999) {
+                    binding.edtName.setText("Quản trị viên hệ thống");
+                    binding.edtEmail.setText("admin@system.com");
+                    binding.tvUserRoleBadge.setText("👑 Vai trò: Admin Tối Cao");
+                    binding.tvUserIdDisplay.setText("Mã tài khoản: #999");
+                } else if (currentUser != null) {
                     binding.edtName.setText(currentUser.getName() != null ? currentUser.getName() : "");
                     binding.edtEmail.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "");
                     binding.tvUserRoleBadge.setText("⚡ Vai trò: " + (currentUser.getRole() != null ? currentUser.getRole() : "Thành viên"));
                     binding.tvUserIdDisplay.setText("Mã tài khoản: #" + currentUser.getId());
-                } else if (userId == 999) {
-                    binding.edtName.setText("Quản trị viên");
-                    binding.edtEmail.setText("admin@system.com");
-                    binding.tvUserRoleBadge.setText("👑 Vai trò: Admin");
-                    binding.tvUserIdDisplay.setText("Mã tài khoản: #999");
                 } else {
                     Toast.makeText(this, "Không tìm thấy thông tin tài khoản!", Toast.LENGTH_SHORT).show();
                 }

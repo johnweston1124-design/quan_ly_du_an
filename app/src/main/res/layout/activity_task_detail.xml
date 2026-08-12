@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/bg_surface">
 
     <!-- Thanh Toolbar hiện đại thụt xuống -->
     <LinearLayout
@@ -17,7 +17,7 @@
         android:paddingTop="48dp"
         android:paddingBottom="12dp"
         android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
+        android:background="@color/bg_surface"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
@@ -26,7 +26,7 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#000000"
+            app:tint="@color/text_primary"
             android:contentDescription="Quay lại" />
 
         <LinearLayout
@@ -41,8 +41,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Chi tiết công việc"
-                android:textColor="#757575"
+                android:text="@string/txt_chi_tiet_cong_viec"
+                android:textColor="@color/text_secondary"
                 android:textSize="15sp" />
         </LinearLayout>
 
@@ -52,7 +52,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#EEEEEE"
+        android:background="@color/divider"
         app:layout_constraintTop_toBottomOf="@id/modernToolbar"/>
 
     <androidx.core.widget.NestedScrollView
@@ -71,7 +71,10 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tên công việc"
+                android:hint="@string/txt_ten_cong_viec"
+                android:textColorHint="@color/text_secondary"
+                app:boxStrokeColor="@color/input_border"
+                app:hintTextColor="@color/text_primary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -80,7 +83,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTaskName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,7 +93,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Mô tả"
+                android:hint="@string/txt_mo_ta"
+                android:textColorHint="@color/text_secondary"
+                app:boxStrokeColor="@color/input_border"
+                app:hintTextColor="@color/text_primary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -108,9 +115,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Thời hạn"
+                android:text="@string/txt_thoi_han"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeadline"
@@ -118,16 +125,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="8dp"
-                android:text="Deadline"
+                android:text="@string/txt_deadline"
                 app:cornerRadius="12dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Độ ưu tiên"
+                android:text="@string/txt_o_uu_tien"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupPriority"
@@ -143,7 +150,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Cao"/>
+                    android:text="@string/txt_cao"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipMedium"
@@ -151,7 +158,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Trung bình"/>
+                    android:text="@string/txt_trung_binh"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipLow"
@@ -159,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Thấp"/>
+                    android:text="@string/txt_thap"/>
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -167,9 +174,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Trạng thái"
+                android:text="@string/txt_trang_thai"
                 android:textStyle="bold"
-                android:textColor="#333333"/>
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupStatus"
@@ -185,7 +192,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Tự do"/>
+                    android:text="@string/txt_tu_do"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDoing"
@@ -193,7 +200,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Đang làm"/>
+                    android:text="@string/txt_ang_lam"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDone"
@@ -201,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Hoàn thành"/>
+                    android:text="@string/txt_hoan_thanh"/>
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -211,7 +218,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
-                android:text="Xem bình luận"
+                android:text="@string/txt_xem_binh_luan"
                 app:cornerRadius="12dp"
                 app:icon="@android:drawable/stat_notify_chat"/>
 
@@ -220,10 +227,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="32dp"
-                android:text="CẬP NHẬT"
+                android:text="@string/txt_cap_nhat"
                 android:textStyle="bold"
                 app:cornerRadius="16dp"
-                android:backgroundTint="#FF4B63"/>
+                android:backgroundTint="@color/danger"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDelete"
@@ -231,9 +238,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="12dp"
-                android:text="XÓA CÔNG VIỆC"
-                android:textColor="#FF4B63"
-                app:strokeColor="#FF4B63"
+                android:text="@string/txt_xoa_cong_viec"
+                android:textColor="@color/danger"
+                app:strokeColor="@color/danger"
                 app:cornerRadius="16dp"/>
 
         </LinearLayout>

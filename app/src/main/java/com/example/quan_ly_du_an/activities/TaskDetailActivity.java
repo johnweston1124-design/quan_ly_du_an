@@ -24,6 +24,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     private TextInputEditText edtTaskName;
     private TextInputEditText edtDescription;
     private MaterialButton btnDeadline;
+    private MaterialButton btnComments;
     private MaterialButton btnUpdate;
     private MaterialButton btnDelete;
     private ChipGroup chipGroupPriority;
@@ -56,6 +57,7 @@ public class TaskDetailActivity extends AppCompatActivity {
         edtTaskName = findViewById(R.id.edtTaskName);
         edtDescription = findViewById(R.id.edtDescription);
         btnDeadline = findViewById(R.id.btnDeadline);
+        btnComments = findViewById(R.id.btnComments);
         btnUpdate = findViewById(R.id.btnUpdate);
         btnDelete = findViewById(R.id.btnDelete);
         chipGroupPriority = findViewById(R.id.chipGroupPriority);
@@ -68,6 +70,13 @@ public class TaskDetailActivity extends AppCompatActivity {
 
     private void setupEvent() {
         btnDeadline.setOnClickListener(v -> showDatePicker());
+        if (btnComments != null) {
+            btnComments.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(TaskDetailActivity.this, CommentActivity.class);
+                intent.putExtra("taskId", taskId);
+                startActivity(intent);
+            });
+        }
         btnUpdate.setOnClickListener(v -> updateTask());
         btnDelete.setOnClickListener(v -> deleteTask());
     }

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/bg_surface"
     tools:context=".activities.AddTaskActivity">
 
     <!-- Thanh Toolbar hiện đại thụt xuống -->
@@ -18,7 +18,7 @@
         android:paddingTop="48dp"
         android:paddingBottom="12dp"
         android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
+        android:background="@color/bg_surface"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
@@ -27,7 +27,7 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_arrow_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#000000"
+            app:tint="@color/text_primary"
             android:contentDescription="Quay lại" />
 
         <LinearLayout
@@ -42,8 +42,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thêm công việc"
-                android:textColor="#757575"
+                android:text="@string/txt_them_cong_viec"
+                android:textColor="@color/text_secondary"
                 android:textSize="15sp" />
         </LinearLayout>
 
@@ -53,7 +53,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#EEEEEE"
+        android:background="@color/divider"
         app:layout_constraintTop_toBottomOf="@id/modernToolbar"/>
 
     <androidx.core.widget.NestedScrollView
@@ -72,10 +72,10 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tên công việc"
-                android:textColorHint="#757575"
-                app:boxStrokeColor="#757575"
-                app:hintTextColor="#212121"
+                android:hint="@string/txt_ten_cong_viec"
+                android:textColorHint="@color/text_secondary"
+                app:boxStrokeColor="@color/input_border"
+                app:hintTextColor="@color/text_primary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -85,7 +85,7 @@
                     android:id="@+id/edtTaskName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#212121"/>
+                    android:textColor="@color/text_primary"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -94,10 +94,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Mô tả chi tiết"
-                android:textColorHint="#757575"
-                app:boxStrokeColor="#757575"
-                app:hintTextColor="#212121"
+                android:hint="@string/txt_mo_ta_chi_tiet"
+                android:textColorHint="@color/text_secondary"
+                app:boxStrokeColor="@color/input_border"
+                app:hintTextColor="@color/text_primary"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
@@ -109,7 +109,7 @@
                     android:layout_height="120dp"
                     android:gravity="top"
                     android:inputType="textMultiLine"
-                    android:textColor="#212121"/>
+                    android:textColor="@color/text_primary"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -117,9 +117,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Thời hạn (Deadline)"
+                android:text="@string/txt_thoi_han_deadline"
                 android:textStyle="bold"
-                android:textColor="#212121"/>
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeadline"
@@ -127,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="8dp"
-                android:text="Chọn ngày hoàn thành"
+                android:text="@string/txt_chon_ngay_hoan_thanh"
                 app:icon="@android:drawable/ic_menu_today"
                 app:cornerRadius="12dp"/>
 
@@ -135,9 +135,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Độ ưu tiên"
+                android:text="@string/txt_o_uu_tien"
                 android:textStyle="bold"
-                android:textColor="#212121"/>
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupPriority"
@@ -153,7 +153,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Cao"/>
+                    android:text="@string/txt_cao"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipMedium"
@@ -162,7 +162,7 @@
                     android:layout_height="wrap_content"
                     android:checkable="true"
                     android:checked="true"
-                    android:text="Trung bình"/>
+                    android:text="@string/txt_trung_binh"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipLow"
@@ -170,7 +170,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Thấp"/>
+                    android:text="@string/txt_thap"/>
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -178,9 +178,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Trạng thái"
+                android:text="@string/txt_trang_thai"
                 android:textStyle="bold"
-                android:textColor="#212121"/>
+                android:textColor="@color/text_primary"/>
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupStatus"
@@ -197,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:checkable="true"
                     android:checked="true"
-                    android:text="Tự do"/>
+                    android:text="@string/txt_tu_do"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDoing"
@@ -205,7 +205,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Đang làm"/>
+                    android:text="@string/txt_ang_lam"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipDone"
@@ -213,7 +213,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:text="Hoàn thành"/>
+                    android:text="@string/txt_hoan_thanh"/>
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -222,10 +222,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="40dp"
-                android:text="LƯU CÔNG VIỆC"
+                android:text="@string/txt_luu_cong_viec"
                 android:textStyle="bold"
                 app:cornerRadius="16dp"
-                android:backgroundTint="#FF4B63"/>
+                android:backgroundTint="@color/danger"/>
 
         </LinearLayout>
 

@@ -7,7 +7,7 @@
     android:layout_margin="16dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeColor="#E0E0E0"
+    app:strokeColor="@color/divider"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -19,8 +19,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm thành viên mới"
-            android:textColor="#1B5E20"
+            android:text="@string/txt_them_thanh_vien_moi"
+            android:textColor="@color/success_dark"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -28,14 +28,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:hintTextColor="#2E7D32"
+            app:hintTextColor="@color/success_dark"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtMemberEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email thành viên"
+                android:hint="@string/txt_email_thanh_vien"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,14 +52,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="LEADER" />
+                android:text="@string/txt_leader" />
 
             <RadioButton
                 android:id="@+id/rbRoleMember"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="MEMBER" />
+                android:text="@string/txt_member" />
         </RadioGroup>
 
         <LinearLayout
@@ -74,15 +74,15 @@
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hủy" />
+                android:text="@string/txt_huy" />
 
             <Button
                 android:id="@+id/btnAddMemberSubmit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#2E7D32"
+                android:backgroundTint="@color/success_dark"
                 android:textColor="@android:color/white"
-                android:text="Thêm" />
+                android:text="@string/txt_them" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

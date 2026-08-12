@@ -77,7 +77,13 @@ public class ProjectRepository {
             try {
                 // Đảm bảo user có tồn tại trong CSDL để tránh lỗi FOREIGN KEY constraint
                 if (userDao.getUserById((int) creatorUserId) == null) {
-                    com.example.quan_ly_du_an.model.User dummyUser = new com.example.quan_ly_du_an.model.User("Demo User", "demo" + creatorUserId + "@example.com", "123456");
+                    com.example.quan_ly_du_an.model.User dummyUser;
+                    if (creatorUserId == 999) {
+                        dummyUser = new com.example.quan_ly_du_an.model.User("Quản trị viên hệ thống", "admin@system.com", "123456");
+                        dummyUser.setRole("Admin");
+                    } else {
+                        dummyUser = new com.example.quan_ly_du_an.model.User("Demo User", "demo" + creatorUserId + "@example.com", "123456");
+                    }
                     dummyUser.setId((int) creatorUserId);
                     userDao.insertUser(dummyUser);
                 }

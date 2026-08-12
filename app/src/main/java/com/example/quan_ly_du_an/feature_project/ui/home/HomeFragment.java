@@ -145,7 +145,7 @@ public class HomeFragment extends BaseFragment {
         new Handler(Looper.getMainLooper()).postDelayed(toast::cancel, Constants.TOAST_DURATION_MS);
     }
 
-    private void showCreateProjectBottomSheet() {
+    public void showCreateProjectBottomSheet() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_setup_project, null);
         bottomSheetDialog.setContentView(dialogView);

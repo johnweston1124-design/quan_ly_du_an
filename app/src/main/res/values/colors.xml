@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="red">#E53935</color>
-    <color name="orange">#FB8C00</color>
-    <color name="green">#43A047</color>
-    <color name="blue">#1E88E5</color>
-    <color name="gray">#9E9E9E</color>
-    <color name="profile_bg">#F5F6FA</color>
-    <color name="logout_btn_bg">#FFEBEF</color>
-    <color name="logout_text">#FF4B63</color>
-    <color name="text_gray">#8E8E93</color>
+    <!-- Base Colors -->
+    <color name="primary">#1E88E5</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="primary_light">#E3F2FD</color>
+    
+    <color name="success">#43A047</color>
+    <color name="success_dark">#2E7D32</color>
+    <color name="success_light">#E8F5E9</color>
+    
+    <color name="danger">#FF4B63</color>
+    <color name="danger_dark">#C62828</color>
+    <color name="danger_light">#FFEBEF</color>
+    
+    <color name="warning">#FF9800</color>
+    <color name="warning_dark">#E65100</color>
+    
+    <color name="purple">#8E24AA</color>
+    <color name="brown">#5D4037</color>
+    <color name="brown_light">#795548</color>
+
+    <!-- UI Colors - Light Mode -->
+    <color name="bg_main">#F8F9FA</color>
+    <color name="bg_surface">#FFFFFF</color>
+    <color name="divider">#F0F0F0</color>
+    
+    <!-- Text Colors - Light Mode -->
+    <color name="text_primary">#1A1C1E</color>
+    <color name="text_secondary">#49454F</color>
+    <color name="text_muted">#8E9099</color>
+    <color name="input_border">#333333</color>
 </resources>

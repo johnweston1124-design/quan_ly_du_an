@@ -26,6 +26,7 @@ import com.example.quan_ly_du_an.model.ProjectWithRole;
 import com.example.quan_ly_du_an.model.Task;
 import com.example.quan_ly_du_an.model.User;
 import com.google.android.material.chip.Chip;
+import com.example.quan_ly_du_an.utils.ThemeAndLocaleManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeAndLocaleManager.applyThemeAndLocale(this);
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -86,7 +88,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         binding.rvRecentTasks.setAdapter(recentTaskAdapter);
 
         // 3. Quick Action click listeners
-        binding.btnQuickAddProject.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_project));
+        binding.btnQuickAddProject.setOnClickListener(v -> {
+            binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
+            binding.bottomNavigation.post(() -> {
+                androidx.fragment.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.layoutProjects);
+                if (fragment instanceof com.example.quan_ly_du_an.feature_project.ui.home.HomeFragment) {
+                    ((com.example.quan_ly_du_an.feature_project.ui.home.HomeFragment) fragment).showCreateProjectBottomSheet();
+                }
+            });
+        });
         binding.btnQuickAddTask.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, AddTaskActivity.class)));
         binding.btnQuickTeam.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_team));
         binding.btnQuickReport.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LichSuActivity.class)));
@@ -188,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     int percent = (total > 0) ? (completed * 100 / total) : 0;
                     binding.pbOverallProgress.setProgress(percent);
                     binding.tvProgressPercent.setText(percent + "%");
-                    binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
                 }
             });
         } else if (userId != -1) {
@@ -241,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     int percent = (total > 0) ? (completed * 100 / total) : 0;
                     binding.pbOverallProgress.setProgress(percent);
                     binding.tvProgressPercent.setText(percent + "%");
-                    binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
                 }
             });
         }
@@ -282,17 +290,17 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             executorService.execute(() -> {
                 User user = db.userDao().getUserById(userId);
                 runOnUiThread(() -> {
-                    if (user != null) {
+                    if (userId == 999) {
+                        binding.tvHomeGreeting.setText("Xin chào, Admin Quản Trị!");
+                        binding.layoutProfile.tvProfileName.setText("Quản trị viên hệ thống");
+                        binding.layoutProfile.tvProfileEmail.setText("admin@system.com");
+                        binding.layoutProfile.tvProfileRole.setText("👑 QUẢN TRỊ VIÊN TỐI CAO");
+                    } else if (user != null) {
                         String name = user.getName();
                         binding.tvHomeGreeting.setText("Xin chào, " + name + "! 👋");
                         binding.layoutProfile.tvProfileName.setText(name);
                         binding.layoutProfile.tvProfileEmail.setText(user.getEmail());
                         binding.layoutProfile.tvProfileRole.setText("⚡ Thành viên chính thức");
-                    } else if (userId == 999) {
-                        binding.tvHomeGreeting.setText("👑 Xin chào, Admin Quản Trị! 👑");
-                        binding.layoutProfile.tvProfileName.setText("Quản trị viên hệ thống");
-                        binding.layoutProfile.tvProfileEmail.setText("admin@system.com");
-                        binding.layoutProfile.tvProfileRole.setText("👑 QUẢN TRỊ VIÊN TỐI CAO");
                     }
                 });
             });
@@ -454,21 +462,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void initProfileTab() {
-        binding.layoutProfile.btnThanhTich.setOnClickListener(v -> {
-            new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("🏆 Bảng Thành Tích & Huy Hiệu")
-                    .setMessage("Các danh hiệu bạn đã đạt được:\n\n" +
-                            "• ⚡ Chuyên gia đúng hạn (Tích lũy >10 task xong)\n" +
-                            "• 🏆 Thành viên tích cực (Điểm thưởng: 850 pts)\n" +
-                            "• 🎯 Tỷ lệ hoàn thành xuất sắc (100%)")
-                    .setPositiveButton("Tuyệt vời", null)
-                    .show();
-        });
-
-        binding.layoutProfile.btnBaoCao.setOnClickListener(v -> {
-            startActivity(new Intent(this, LichSuActivity.class));
-        });
-
         binding.layoutProfile.btnThongTinCaNhan.setOnClickListener(v -> {
             startActivity(new Intent(this, ThongTinCaNhanActivity.class));
         });
@@ -496,30 +489,37 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             Toast.makeText(this, "Thông báo ứng dụng và nhắc nhở deadline đang BẬT", Toast.LENGTH_SHORT).show();
         });
 
-        SharedPreferences langPref = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
-        String currentLang = langPref.getString("APP_LANGUAGE", "Tiếng Việt");
+        String currentLang = ThemeAndLocaleManager.getLanguageName(this);
         binding.layoutProfile.tvCurrentLanguage.setText(currentLang);
+
+        boolean isDark = ThemeAndLocaleManager.isDarkMode(this);
+        binding.layoutProfile.tvCurrentDarkMode.setText(isDark ? "Bật" : "Tắt");
 
         binding.layoutProfile.btnNgonNgu.setOnClickListener(v -> {
             String[] languages = {"🇻🇳 Tiếng Việt (Vietnamese)", "🇬🇧 English (Tiếng Anh)"};
-            String saved = langPref.getString("APP_LANGUAGE", "Tiếng Việt");
+            String saved = ThemeAndLocaleManager.getLanguageName(this);
             int checkedItem = saved.contains("English") ? 1 : 0;
 
             new androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("🌐 Chọn Ngôn Ngữ Ứng Dụng")
                     .setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
-                        String selected = (which == 1) ? "English" : "Tiếng Việt";
-                        langPref.edit().putString("APP_LANGUAGE", selected).apply();
-                        binding.layoutProfile.tvCurrentLanguage.setText(selected);
+                        String selectedName = (which == 1) ? "English" : "Tiếng Việt";
+                        String selectedCode = (which == 1) ? "en" : "vi";
+                        ThemeAndLocaleManager.setLanguage(this, selectedName, selectedCode);
+                        binding.layoutProfile.tvCurrentLanguage.setText(selectedName);
                         Toast.makeText(this, (which == 1) ? "Switched language to English 🇬🇧" : "Đã chuyển sang Tiếng Việt 🇻🇳", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
+                        recreate();
                     })
                     .setNegativeButton("Hủy", null)
                     .show();
         });
 
         binding.layoutProfile.btnDarkMode.setOnClickListener(v -> {
-            Toast.makeText(this, "Giao diện đang ở chế độ sáng (Light Mode)", Toast.LENGTH_SHORT).show();
+            boolean newDarkState = !ThemeAndLocaleManager.isDarkMode(this);
+            ThemeAndLocaleManager.setDarkMode(this, newDarkState);
+            binding.layoutProfile.tvCurrentDarkMode.setText(newDarkState ? "Bật" : "Tắt");
+            Toast.makeText(this, newDarkState ? "Đã bật Chế độ tối 🌙" : "Đã chuyển sang Chế độ sáng ☀️", Toast.LENGTH_SHORT).show();
         });
 
         binding.layoutProfile.btnTroGiup.setOnClickListener(v -> {

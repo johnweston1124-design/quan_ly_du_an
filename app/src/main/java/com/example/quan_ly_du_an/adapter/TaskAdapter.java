@@ -108,13 +108,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         if (priority == null) return;
         switch (priority) {
             case "Cao":
-                chip.setChipBackgroundColorResource(R.color.red);
+                chip.setChipBackgroundColorResource(R.color.danger);
                 break;
             case "Trung bình":
-                chip.setChipBackgroundColorResource(R.color.orange);
+                chip.setChipBackgroundColorResource(R.color.warning);
                 break;
             default:
-                chip.setChipBackgroundColorResource(R.color.green);
+                chip.setChipBackgroundColorResource(R.color.success);
                 break;
         }
     }
@@ -123,15 +123,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         if (status == null) return;
         switch (status) {
             case "Tự do":
-                chip.setChipBackgroundColorResource(R.color.gray);
+                chip.setChipBackgroundColorResource(R.color.text_secondary);
                 break;
             case "In Progress":
             case "Đang làm":
-                chip.setChipBackgroundColorResource(R.color.blue);
+                chip.setChipBackgroundColorResource(R.color.primary);
                 break;
             case "Done":
             case "Hoàn thành":
-                chip.setChipBackgroundColorResource(R.color.green);
+                chip.setChipBackgroundColorResource(R.color.success);
                 break;
         }
     }

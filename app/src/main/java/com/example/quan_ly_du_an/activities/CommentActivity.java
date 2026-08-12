@@ -50,8 +50,21 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void loadComments() {
-        db.commentDao().getCommentsByTaskId(taskId).observe(this, comments -> {
-            adapter.submitList(comments);
+        executorService.execute(() -> {
+            List<com.example.quan_ly_du_an.model.User> users = db.userDao().getAllUsers();
+            java.util.Map<Integer, String> userMap = new java.util.HashMap<>();
+            userMap.put(999, "Quản trị viên hệ thống");
+            if (users != null) {
+                for (com.example.quan_ly_du_an.model.User u : users) {
+                    userMap.put(u.getId(), u.getName());
+                }
+            }
+            runOnUiThread(() -> {
+                adapter.setUserMap(userMap);
+                db.commentDao().getCommentsByTaskId(taskId).observe(this, comments -> {
+                    adapter.submitList(comments);
+                });
+            });
         });
     }
 
@@ -59,9 +72,12 @@ public class CommentActivity extends AppCompatActivity {
         btnSendComment.setOnClickListener(v -> {
             String content = edtCommentInput.getText().toString().trim();
             if (!content.isEmpty()) {
+                android.content.SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
+                int currentUserId = sharedPref.getInt("USER_ID", 1);
+
                 Comment newComment = new Comment();
                 newComment.taskId = taskId;
-                newComment.userId = 1; // Demo user
+                newComment.userId = currentUserId;
                 newComment.content = content;
                 newComment.timestamp = System.currentTimeMillis();
                 
