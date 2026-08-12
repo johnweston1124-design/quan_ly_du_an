@@ -85,34 +85,163 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         binding.rvRecentTasks.setLayoutManager(new LinearLayoutManager(this));
         binding.rvRecentTasks.setAdapter(recentTaskAdapter);
 
-        // 3. Quan sát dữ liệu
+        // 3. Quick Action click listeners
+        binding.btnQuickAddProject.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_project));
+        binding.btnQuickAddTask.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, AddTaskActivity.class)));
+        binding.btnQuickTeam.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_team));
+        binding.btnQuickReport.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LichSuActivity.class)));
+        binding.btnSeeAllProjects.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_project));
+        binding.btnSeeAllTasks.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_task));
+        binding.btnNotification.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới nào", Toast.LENGTH_SHORT).show());
+
+        // 4. Quan sát dữ liệu
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("USER_ID", -1);
 
-        if (userId != -1) {
-            // Lấy 3 dự án mới nhất
-            db.projectDao().getLatestProjectsForUser((long) userId, 3).observe(this, projects -> {
+        // Hiển thị Admin Control Panel nếu là Admin hệ thống
+        if (userId == 999) {
+            binding.layoutAdminPanel.setVisibility(View.VISIBLE);
+            binding.btnAdminManageUsers.setOnClickListener(v -> {
+                executorService.execute(() -> {
+                    List<User> userList = db.userDao().getAllUsers();
+                    StringBuilder sb = new StringBuilder("Danh sách tài khoản hệ thống (" + userList.size() + "):\n");
+                    for (User u : userList) {
+                        sb.append("• ").append(u.getName()).append(" (").append(u.getEmail()).append(")\n");
+                    }
+                    runOnUiThread(() -> {
+                        new androidx.appcompat.app.AlertDialog.Builder(this)
+                                .setTitle("👥 Quản Lý Người Dùng")
+                                .setMessage(sb.toString())
+                                .setPositiveButton("Đóng", null)
+                                .show();
+                    });
+                });
+            });
+
+            binding.btnAdminAllProjects.setOnClickListener(v -> {
+                binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
+            });
+
+            // Tải thống kê toàn hệ thống cho Admin
+            executorService.execute(() -> {
+                int totalUsers = db.userDao().getTotalUsersCount();
+                int totalProjects = db.projectDao().getTotalProjectsCount();
+                int totalTasks = db.taskDao().getTotalTasksCount();
+
+                runOnUiThread(() -> {
+                    binding.tvAdminTotalUsers.setText(String.valueOf(totalUsers));
+                    binding.tvAdminTotalProjects.setText(String.valueOf(totalProjects));
+                    binding.tvAdminTotalTasks.setText(String.valueOf(totalTasks));
+                });
+            });
+        } else {
+            binding.layoutAdminPanel.setVisibility(View.GONE);
+        }
+
+        if (userId == 999) {
+            // Admin: Lấy 3 dự án mới nhất của TOÀN BỘ NHÂN VIÊN
+            db.projectDao().getAllLatestProjectsForAdmin(3).observe(this, projects -> {
                 if (projects != null) {
                     recentProjectAdapter.setProjects(projects);
-                    // Cập nhật con số thống kê dự án
                     executorService.execute(() -> {
-                        int count = db.projectDao().getProjectsForUser((long) userId).size();
-                        runOnUiThread(() -> binding.tvCountProjects.setText("Dự án đang làm: " + count));
+                        int count = db.projectDao().getTotalProjectsCount();
+                        runOnUiThread(() -> {
+                            binding.tvCountProjects.setText(String.valueOf(count));
+                            binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
+                        });
                     });
                 }
             });
 
-            // Lấy 3 công việc mới nhất của User này
+            // Admin: Lấy 3 công việc mới nhất của TOÀN BỘ NHÂN VIÊN
+            db.taskDao().getLatestTasks(3).observe(this, tasks -> {
+                if (tasks != null) {
+                    recentTaskAdapter.updateData(tasks);
+                }
+            });
+
+            // Admin: Cập nhật tổng số công việc của TOÀN BỘ NHÂN VIÊN
+            db.taskDao().getAllTasks().observe(this, allTasks -> {
+                if (allTasks != null) {
+                    int total = allTasks.size();
+                    int completed = 0;
+                    int pending = 0;
+                    int highPriority = 0;
+
+                    for (Task t : allTasks) {
+                        if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
+                            completed++;
+                        } else {
+                            pending++;
+                        }
+                        if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
+                            highPriority++;
+                        }
+                    }
+
+                    binding.tvCountTasks.setText(String.valueOf(pending));
+                    binding.tvCountCompletedTasks.setText(String.valueOf(completed));
+                    binding.tvCountHighTasks.setText(String.valueOf(highPriority));
+
+                    binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
+
+                    int percent = (total > 0) ? (completed * 100 / total) : 0;
+                    binding.pbOverallProgress.setProgress(percent);
+                    binding.tvProgressPercent.setText(percent + "%");
+                    binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
+                }
+            });
+        } else if (userId != -1) {
+            // User thường: Lấy 3 dự án mới nhất của chính User đó
+            db.projectDao().getLatestProjectsForUser((long) userId, 3).observe(this, projects -> {
+                if (projects != null) {
+                    recentProjectAdapter.setProjects(projects);
+                    executorService.execute(() -> {
+                        int count = db.projectDao().getProjectsForUser((long) userId).size();
+                        runOnUiThread(() -> {
+                            binding.tvCountProjects.setText(String.valueOf(count));
+                            binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
+                        });
+                    });
+                }
+            });
+
+            // User thường: Lấy 3 công việc mới nhất của chính User đó
             db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
                 if (tasks != null) {
                     recentTaskAdapter.updateData(tasks);
                 }
             });
 
-            // Cập nhật tổng số công việc của User này
+            // User thường: Cập nhật tổng số công việc cá nhân
             db.taskDao().getAllTasksForUser(userId).observe(this, allTasks -> {
                 if (allTasks != null) {
-                    binding.tvCountTasks.setText("Công việc hôm nay: " + allTasks.size());
+                    int total = allTasks.size();
+                    int completed = 0;
+                    int pending = 0;
+                    int highPriority = 0;
+
+                    for (Task t : allTasks) {
+                        if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
+                            completed++;
+                        } else {
+                            pending++;
+                        }
+                        if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
+                            highPriority++;
+                        }
+                    }
+
+                    binding.tvCountTasks.setText(String.valueOf(pending));
+                    binding.tvCountCompletedTasks.setText(String.valueOf(completed));
+                    binding.tvCountHighTasks.setText(String.valueOf(highPriority));
+
+                    binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
+
+                    int percent = (total > 0) ? (completed * 100 / total) : 0;
+                    binding.pbOverallProgress.setProgress(percent);
+                    binding.tvProgressPercent.setText(percent + "%");
+                    binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
                 }
             });
         }
@@ -154,11 +283,16 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 User user = db.userDao().getUserById(userId);
                 runOnUiThread(() -> {
                     if (user != null) {
-                        binding.layoutProfile.tvProfileName.setText(user.getName());
+                        String name = user.getName();
+                        binding.tvHomeGreeting.setText("Xin chào, " + name + "! 👋");
+                        binding.layoutProfile.tvProfileName.setText(name);
                         binding.layoutProfile.tvProfileEmail.setText(user.getEmail());
+                        binding.layoutProfile.tvProfileRole.setText("⚡ Thành viên chính thức");
                     } else if (userId == 999) {
-                        binding.layoutProfile.tvProfileName.setText("Quản trị viên");
+                        binding.tvHomeGreeting.setText("👑 Xin chào, Admin Quản Trị! 👑");
+                        binding.layoutProfile.tvProfileName.setText("Quản trị viên hệ thống");
                         binding.layoutProfile.tvProfileEmail.setText("admin@system.com");
+                        binding.layoutProfile.tvProfileRole.setText("👑 QUẢN TRỊ VIÊN TỐI CAO");
                     }
                 });
             });
@@ -237,7 +371,24 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("USER_ID", -1);
 
-        if (userId != -1) {
+        if (userId == 999) {
+            // Admin: Quan sát toàn bộ công việc của nhân viên trong hệ thống
+            db.taskDao().getAllTasks().observe(this, tasks -> {
+                if (tasks != null) {
+                    currentFullList = tasks;
+                    taskAdapter.updateData(tasks);
+
+                    if (tasks.isEmpty()) {
+                        binding.layoutTasks.layoutEmpty.setVisibility(View.VISIBLE);
+                        binding.layoutTasks.rvTask.setVisibility(View.GONE);
+                    } else {
+                        binding.layoutTasks.layoutEmpty.setVisibility(View.GONE);
+                        binding.layoutTasks.rvTask.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        } else if (userId != -1) {
+            // User thường: Chỉ quan sát công việc được phân công cho cá nhân
             db.taskDao().getAllTasksForUser(userId).observe(this, tasks -> {
                 if (tasks != null) {
                     currentFullList = tasks;
@@ -303,15 +454,101 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void initProfileTab() {
+        binding.layoutProfile.btnThanhTich.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("🏆 Bảng Thành Tích & Huy Hiệu")
+                    .setMessage("Các danh hiệu bạn đã đạt được:\n\n" +
+                            "• ⚡ Chuyên gia đúng hạn (Tích lũy >10 task xong)\n" +
+                            "• 🏆 Thành viên tích cực (Điểm thưởng: 850 pts)\n" +
+                            "• 🎯 Tỷ lệ hoàn thành xuất sắc (100%)")
+                    .setPositiveButton("Tuyệt vời", null)
+                    .show();
+        });
+
+        binding.layoutProfile.btnBaoCao.setOnClickListener(v -> {
+            startActivity(new Intent(this, LichSuActivity.class));
+        });
+
         binding.layoutProfile.btnThongTinCaNhan.setOnClickListener(v -> {
             startActivity(new Intent(this, ThongTinCaNhanActivity.class));
+        });
+
+        binding.layoutProfile.btnDoiMatKhau.setOnClickListener(v -> {
+            startActivity(new Intent(this, DoiMatKhauActivity.class));
+        });
+
+        binding.layoutProfile.btnNhatKyDangNhap.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("🛡️ Nhật Ký Đăng Nhập")
+                    .setMessage("Các thiết bị đăng nhập gần đây:\n\n" +
+                            "• Android Phone - 22:30 hôm nay (Thiết bị này)\n" +
+                            "• Chrome Web Client - 18:45 hôm qua\n" +
+                            "• Trạng thái bảo mật: Đã xác thực 🟢")
+                    .setPositiveButton("Đóng", null)
+                    .show();
         });
 
         binding.layoutProfile.btnLichSu.setOnClickListener(v -> {
             startActivity(new Intent(this, LichSuActivity.class));
         });
 
-        binding.layoutProfile.btnLogout.setOnClickListener(v -> handleLogout());
+        binding.layoutProfile.btnCaiDatThongBao.setOnClickListener(v -> {
+            Toast.makeText(this, "Thông báo ứng dụng và nhắc nhở deadline đang BẬT", Toast.LENGTH_SHORT).show();
+        });
+
+        SharedPreferences langPref = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        String currentLang = langPref.getString("APP_LANGUAGE", "Tiếng Việt");
+        binding.layoutProfile.tvCurrentLanguage.setText(currentLang);
+
+        binding.layoutProfile.btnNgonNgu.setOnClickListener(v -> {
+            String[] languages = {"🇻🇳 Tiếng Việt (Vietnamese)", "🇬🇧 English (Tiếng Anh)"};
+            String saved = langPref.getString("APP_LANGUAGE", "Tiếng Việt");
+            int checkedItem = saved.contains("English") ? 1 : 0;
+
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("🌐 Chọn Ngôn Ngữ Ứng Dụng")
+                    .setSingleChoiceItems(languages, checkedItem, (dialog, which) -> {
+                        String selected = (which == 1) ? "English" : "Tiếng Việt";
+                        langPref.edit().putString("APP_LANGUAGE", selected).apply();
+                        binding.layoutProfile.tvCurrentLanguage.setText(selected);
+                        Toast.makeText(this, (which == 1) ? "Switched language to English 🇬🇧" : "Đã chuyển sang Tiếng Việt 🇻🇳", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
+
+        binding.layoutProfile.btnDarkMode.setOnClickListener(v -> {
+            Toast.makeText(this, "Giao diện đang ở chế độ sáng (Light Mode)", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.layoutProfile.btnTroGiup.setOnClickListener(v -> {
+            Toast.makeText(this, "Liên hệ hỗ trợ 24/7: hotro@quanlyduan.com", Toast.LENGTH_LONG).show();
+        });
+
+        binding.layoutProfile.btnDieuKhoan.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("📜 Điều Khoản & Chính Sách")
+                    .setMessage("Chính sách sử dụng và bảo mật dữ liệu:\n\n" +
+                            "1. Tất cả dữ liệu dự án được mã hóa bảo mật.\n" +
+                            "2. Người dùng có toàn quyền quản lý dữ liệu cá nhân.\n" +
+                            "3. Ứng dụng tuân thủ tiêu chuẩn an toàn thông tin ISO/IEC 27001.")
+                    .setPositiveButton("Đã hiểu", null)
+                    .show();
+        });
+
+        binding.layoutProfile.btnThongTinApp.setOnClickListener(v -> {
+            Toast.makeText(this, "Quản Lý Dự Án - Phiên bản v1.0.0 (Latest)", Toast.LENGTH_SHORT).show();
+        });
+
+        binding.layoutProfile.btnLogout.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Đăng Xuất")
+                    .setMessage("Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng?")
+                    .setPositiveButton("Đăng xuất", (dialog, which) -> handleLogout())
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
     }
 
     private void initProjectTab() {

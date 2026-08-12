@@ -19,90 +19,616 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Tab 1: Tổng quan (Home) -->
+        <!-- Tab 1: Tổng quan (Home Dashboard) -->
         <ScrollView
             android:id="@+id/layoutHome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FFFFFF"
+            android:background="#F8F9FA"
             android:visibility="visible">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
+                android:paddingTop="36dp"
+                android:paddingBottom="80dp">
+
+                <!-- Header Chào mừng -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tổng quan hệ thống"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="#212121"
-                    android:layout_marginBottom="16dp"/>
+                    android:paddingHorizontal="20dp"
+                    android:layout_marginBottom="20dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/btnNotification">
+
+                        <TextView
+                            android:id="@+id/tvHomeGreeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Xin chào! 👋"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="#1A1C1E" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Chúc bạn một ngày làm việc hiệu quả"
+                            android:textSize="13sp"
+                            android:textColor="#74777F" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnNotification"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/bg_quick_action_btn"
+                        android:src="@android:drawable/ic_popup_reminder"
+                        app:tint="#1E88E5"
+                        android:contentDescription="Thông báo" />
+                </RelativeLayout>
+
+                <!-- Admin VIP Dashboard Control Panel (Visible ONLY for Admin) -->
+                <LinearLayout
+                    android:id="@+id/layoutAdminPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/bg_admin_card"
+                    android:orientation="vertical"
+                    android:padding="18dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👑 BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN"
+                        android:textColor="#B78103"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Báo cáo số liệu toàn bộ hệ thống"
+                        android:textColor="#795548"
+                        android:textSize="12sp" />
+
+                    <!-- Stats Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <!-- Stat 1: Total Users -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvAdminTotalUsers"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="#B78103"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="👥 Tài khoản"
+                                android:textColor="#5D4037"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Stat 2: Total Projects -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvAdminTotalProjects"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="#B78103"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📁 Dự án"
+                                android:textColor="#5D4037"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <!-- Stat 3: Total Tasks -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvAdminTotalTasks"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="#B78103"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📝 Công việc"
+                                android:textColor="#5D4037"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Admin Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAdminManageUsers"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="👥 Danh sách User"
+                            android:textColor="#5D4037"
+                            android:textSize="12sp"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAdminAllProjects"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="44dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="📁 Dự án hệ thống"
+                            android:textColor="#5D4037"
+                            android:textSize="12sp"
+                            app:cornerRadius="10dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Lưới 4 Thẻ Thống Kê 2x2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:layout_marginBottom="12dp">
+
+                        <!-- Thẻ 1: Dự án đang làm -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_stat_card_blue"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📂 Dự án"
+                                android:textSize="13sp"
+                                android:textColor="#1565C0"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountProjects"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#0D47A1"
+                                android:textSize="26sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Thẻ 2: Việc hôm nay -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/bg_stat_card_orange"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📝 Việc chưa làm"
+                                android:textSize="13sp"
+                                android:textColor="#E65100"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountTasks"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#BF360C"
+                                android:textSize="26sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <!-- Thẻ 3: Đã hoàn thành -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/bg_stat_card_green"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✅ Hoàn thành"
+                                android:textSize="13sp"
+                                android:textColor="#2E7D32"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountCompletedTasks"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#1B5E20"
+                                android:textSize="26sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Thẻ 4: Ưu tiên cao -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="100dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/bg_stat_card_red"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🔥 Ưu tiên cao"
+                                android:textSize="13sp"
+                                android:textColor="#C62828"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountHighTasks"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#B71C1C"
+                                android:textSize="26sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Card Tiến độ tổng thể -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="@color/white"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="16dp"
                     app:cardElevation="2dp"
-                    android:layout_marginBottom="16dp">
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:strokeWidth="0dp">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-                        <TextView
-                            android:id="@+id/tvCountProjects"
-                            android:layout_width="wrap_content"
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Dự án đang làm: 0"
-                            android:textColor="#212121"
-                            android:textSize="16sp"/>
-                        <TextView
-                            android:id="@+id/tvCountTasks"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Công việc hôm nay: 0"
-                            android:textColor="#212121"
-                            android:textSize="16sp"/>
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="📊 Tiến độ hoàn thành chung"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#1A1C1E"/>
+
+                            <TextView
+                                android:id="@+id/tvProgressPercent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:text="0%"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#1E88E5"/>
+                        </RelativeLayout>
+
+                        <ProgressBar
+                            android:id="@+id/pbOverallProgress"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:progress="0"
+                            android:max="100"
+                            android:progressDrawable="@android:drawable/progress_horizontal"
+                            android:progressTint="#1E88E5"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Dự án mới nhất -->
+                <!-- Thanh Thao tác nhanh (Quick Actions) -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dự án gần đây"
-                    android:textSize="18sp"
+                    android:text="Lối tắt thao tác"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="#212121"
-                    android:layout_marginTop="8dp"
+                    android:textColor="#1A1C1E"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="24dp">
+
+                    <!-- Nút 1: Tạo dự án -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickAddProject"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_quick_action_btn"
+                            android:src="@android:drawable/ic_input_add"
+                            android:padding="12dp"
+                            app:tint="#1E88E5" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Tạo dự án"
+                            android:textSize="12sp"
+                            android:textColor="#44474F"/>
+                    </LinearLayout>
+
+                    <!-- Nút 2: Thêm việc -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickAddTask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_quick_action_btn"
+                            android:src="@android:drawable/ic_menu_edit"
+                            android:padding="12dp"
+                            app:tint="#43A047" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Thêm việc"
+                            android:textSize="12sp"
+                            android:textColor="#44474F"/>
+                    </LinearLayout>
+
+                    <!-- Nút 3: Đội ngũ -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickTeam"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_quick_action_btn"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            android:padding="12dp"
+                            app:tint="#FB8C00" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Đội ngũ"
+                            android:textSize="12sp"
+                            android:textColor="#44474F"/>
+                    </LinearLayout>
+
+                    <!-- Nút 4: Báo cáo -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickReport"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_quick_action_btn"
+                            android:src="@android:drawable/ic_menu_sort_by_size"
+                            android:padding="12dp"
+                            app:tint="#8E24AA" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Lịch sử"
+                            android:textSize="12sp"
+                            android:textColor="#44474F"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Dự án gần đây -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="Dự án gần đây"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1C1E"/>
+
+                    <TextView
+                        android:id="@+id/btnSeeAllProjects"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Xem tất cả ›"
+                        android:textSize="14sp"
+                        android:textColor="#1E88E5"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvRecentProjects"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:paddingHorizontal="16dp"
                     android:layout_marginBottom="20dp"
                     tools:listitem="@layout/item_project_card"/>
 
                 <!-- Công việc mới nhất -->
-                <TextView
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Công việc mới nhất"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#212121"
-                    android:layout_marginBottom="12dp"/>
+                    android:paddingHorizontal="20dp"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="Công việc mới nhất"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1C1E"/>
+
+                    <TextView
+                        android:id="@+id/btnSeeAllTasks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Xem tất cả ›"
+                        android:textSize="14sp"
+                        android:textColor="#1E88E5"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvRecentTasks"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    android:layout_marginBottom="80dp"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="20dp"
                     tools:listitem="@layout/item_task"/>
 
             </LinearLayout>

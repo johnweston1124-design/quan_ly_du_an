@@ -42,4 +42,15 @@ public interface ProjectDao {
            "WHERE m.user_id = :userId " +
            "ORDER BY p.project_id DESC LIMIT :limit")
     androidx.lifecycle.LiveData<List<ProjectWithRole>> getLatestProjectsForUser(long userId, int limit);
+
+    @Query("SELECT COUNT(*) FROM projects")
+    int getTotalProjectsCount();
+
+    @Query("SELECT p.project_id AS projectId, p.title, p.description, p.status, 'Admin' AS role " +
+           "FROM projects p ORDER BY p.project_id DESC LIMIT :limit")
+    androidx.lifecycle.LiveData<List<ProjectWithRole>> getAllLatestProjectsForAdmin(int limit);
+
+    @Query("SELECT p.project_id AS projectId, p.title, p.description, p.status, 'Admin' AS role " +
+           "FROM projects p ORDER BY p.project_id DESC")
+    List<ProjectWithRole> getAllProjectsForAdmin();
 }

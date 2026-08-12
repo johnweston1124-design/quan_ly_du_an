@@ -56,6 +56,10 @@
             android:name=".activities.ThongTinCaNhanActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activities.DoiMatKhauActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

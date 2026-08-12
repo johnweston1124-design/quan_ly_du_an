@@ -43,4 +43,7 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE assignedUserId = :userId ORDER BY taskId DESC LIMIT :limit")
     LiveData<List<Task>> getLatestTasksForUser(int userId, int limit);
+
+    @Query("SELECT COUNT(*) FROM tasks")
+    int getTotalTasksCount();
 }

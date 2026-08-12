@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Tiểu Luận - Quản Lý Dự Án - Phạm Anh Quốc</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm 2cm 2.5cm 3cm;
+        }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 13pt;
+            line-height: 1.4;
+            color: #111111;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .page {
+            background-color: #ffffff;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 25mm 20mm 25mm 30mm;
+            margin: 20px auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+        @media print {
+            body { background: none; padding: 0; }
+            .page { box-shadow: none; margin: 0; width: 100%; min-height: initial; page-break-after: always; }
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-justify { text-align: justify; }
+        
+        .header-title { font-size: 14pt; font-weight: bold; margin: 0; text-transform: uppercase; }
+        .sub-header { font-size: 14pt; font-weight: bold; margin: 5px 0 20px 0; }
+        
+        .main-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #b40000;
+            margin: 30px 0 10px 0;
+            text-transform: uppercase;
+        }
+        .subject-title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #003366;
+            margin: 15px 0 40px 0;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+        
+        .info-box {
+            font-size: 13pt;
+            line-height: 1.8;
+            margin-top: 50px;
+            text-align: left;
+            display: inline-block;
+        }
+        .info-box strong { font-weight: bold; }
+        
+        h1 {
+            font-size: 15pt;
+            color: #003366;
+            text-transform: uppercase;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        h2 {
+            font-size: 13.5pt;
+            color: #006699;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 13pt;
+            font-style: italic;
+            color: #333333;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        p {
+            text-align: justify;
+            text-indent: 1cm;
+            margin: 6px 0;
+        }
+        p.no-indent { text-indent: 0; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 11pt;
+        }
+        table, th, td {
+            border: 1px solid #cccccc;
+        }
+        th {
+            background-color: #003366;
+            color: #ffffff;
+            padding: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        td {
+            padding: 8px;
+            vertical-align: top;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f5f8;
+        }
+        
+        code, pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            padding: 10px;
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 10px 0;
+        }
+        .signature {
+            margin-top: 30px;
+            float: right;
+            text-align: center;
+            font-style: italic;
+        }
+        .clear { clear: both; }
+    </style>
+</head>
+<body>
+
+    <!-- TRANG BÌA CHÍNH -->
+    <div class="page text-center">
+        <div class="header-title">TRƯỜNG ĐẠI HỌC NGUYỄN TẤT THÀNH</div>
+        <div class="sub-header">KHOA CÔNG NGHỆ THÔNG TIN</div>
+        
+        <div style="height: 40px;"></div>
+        <div class="main-title">TIỂU LUẬN LẬP TRÌNH THIẾT BỊ DI ĐỘNG</div>
+        
+        <div style="height: 20px;"></div>
+        <div style="font-size: 13pt; font-weight: bold;">ĐỀ TÀI:</div>
+        <div class="subject-title">XÂY DỰNG ỨNG DỤNG DI ĐỘNG QUẢN LÝ DỰ ÁN VÀ CÔNG VIỆC<br>(TASK & PROJECT MANAGEMENT APP)</div>
+        
+        <div style="height: 60px;"></div>
+        <div class="info-box">
+            <div><strong>Giảng viên hướng dẫn :</strong> ĐỖ GIA BẢO</div>
+            <div><strong>Sinh viên thực hiện    :</strong> PHẠM ANH QUỐC</div>
+            <div><strong>Mã số sinh viên          :</strong> 2400008750</div>
+            <div><strong>Khóa                              :</strong> 24</div>
+            <div><strong>Ngành / Chuyên ngành:</strong> KỸ THUẬT PHẦN MỀM</div>
+        </div>
+        
+        <div style="position: absolute; bottom: 30mm; left: 0; right: 0;" class="text-center">
+            <em>TP. Hồ Chí Minh, Tháng 08 năm 2026</em>
+        </div>
+    </div>
+
+    <!-- LỜI CẢM ƠN -->
+    <div class="page">
+        <h1>LỜI CẢM ƠN</h1>
+        <p>Trong suốt thời gian học tập, nghiên cứu và thực hiện đề tài "Xây dựng ứng dụng di động Quản lý dự án và Công việc", em đã nhận được sự quan tâm, chỉ bảo tận tình từ phía Nhà trường, quý Thầy Cô cùng các bạn sinh viên.</p>
+        <p>Lời đầu tiên, em xin gửi lời cảm ơn chân thành và sâu sắc nhất đến Ban Giám hiệu nhà trường cùng toàn thể quý Thầy Cô Khoa Công nghệ Thông tin - Trường Đại học Nguyễn Tất Thành. Cảm ơn quý Thầy Cô đã tận tâm giảng dạy, truyền đạt những kiến thức nền tảng và chuyên môn quý báu trong suốt quá trình học tập trên giảng đường. Đây chính là hành trang vô giá giúp em có đủ cơ sở lý thuyết và năng lực thực tiễn để hoàn thành tốt đề tài này.</p>
+        <p>Đặc biệt, em xin bày tỏ lòng biết ơn sâu sắc đến Thầy Đỗ Gia Bảo – Giảng viên hướng dẫn trực tiếp của môn học. Nhờ có sự định hướng khoa học, những lời khuyên tận tình và sự hỗ trợ chi tiết của Thầy, em mới có thể từng bước hoàn thiện ứng dụng Android cũng như hệ thống Backend RESTful API một cách chỉn chu nhất.</p>
+        <p>Mặc dù đã nỗ lực hết sức để hoàn thành đề tài theo đúng tiến độ và mục tiêu đề ra, tuy nhiên do hạn chế về kinh nghiệm thực tế nên báo cáo không tránh khỏi thiếu sót. Em rất mong nhận được ý kiến đóng góp từ quý Thầy Cô.</p>
+        
+        <div class="signature">
+            TP. Hồ Chí Minh, tháng 08 năm 2026<br>
+            <strong>Sinh viên thực hiện</strong><br><br><br><br>
+            <strong>PHẠM ANH QUỐC</strong>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <!-- LỜI MỞ ĐẦU -->
+    <div class="page">
+        <h1>LỜI MỞ ĐẦU</h1>
+        <p>Trong kỷ nguyên công nghệ số 4.0, việc quản lý công việc và dự án hiệu quả là yếu tố then chốt quyết định sự thành công của cá nhân lẫn tập thể. Sự gia tăng của các dự án làm việc nhóm đòi hỏi sự phối hợp chặt chẽ, theo dõi tiến độ chính xác và phân công công việc một cách rõ ràng giữa các thành viên.</p>
+        <p>Cùng với sự phát triển mạnh mẽ của các thiết bị di động chạy hệ điều hành Android, việc ứng dụng công nghệ thông tin vào quản lý công việc cá nhân và tổ chức dự án nhóm đã trở thành một xu hướng tất yếu. Các ứng dụng di động cho phép người dùng kiểm tra danh sách nhiệm vụ mọi lúc mọi nơi, nhận thông báo hạn chót (deadline) tức thì và phản hồi tương tác nhanh chóng.</p>
+        <p>Xuất phát từ thực tế đó, đề tài "Xây dựng ứng dụng di động Quản lý dự án và Công việc" (Task & Project Management App) được lựa chọn nghiên cứu và triển khai. Đề tài tập trung xây dựng ứng dụng di động chuẩn Native trên nền tảng Android (ngôn ngữ Java, Room Database, Jetpack components, WorkManager, Retrofit 2) kết hợp hệ thống Server Backend RESTful API vững chắc (Node.js/Express, CSDL MySQL/MongoDB).</p>
+    </div>
+
+    <!-- CHƯƠNG 1 -->
+    <div class="page">
+        <h1>CHƯƠNG 1: TỔNG QUAN ĐỀ TÀI</h1>
+        <h2>1.1 Lý do chọn đề tài</h2>
+        <p>Trong môi trường làm việc và học tập hiện đại, người dùng thường phải đảm nhận cùng lúc nhiều dự án với số lượng công việc (task) lớn. Quản lý thủ công qua sổ sách hoặc tin nhắn chat thông thường bộc lộ nhiều hạn chế:</p>
+        <p class="no-indent">• Dễ bỏ sót công việc quan trọng hoặc trễ hạn chót (deadline) do không có cơ chế cảnh báo tự động.</p>
+        <p class="no-indent">• Thiếu công cụ theo dõi trạng thái công việc (Pending, In Progress, Completed) trực quan.</p>
+        <p class="no-indent">• Khó phân định vai trò và quyền hạn giữa Người tạo dự án (Owner/Admin) và Thành viên thực hiện (Member).</p>
+        <p class="no-indent">• Thiếu nhật ký lịch sử thay đổi để theo dõi quá trình thực hiện nhiệm vụ.</p>
+        
+        <h2>1.2 Mục tiêu đề tài</h2>
+        <p class="no-indent">• Nghiên cứu và áp dụng kiến trúc phần mềm Android Native tiên tiến (MVVM pattern, Room Persistence Library, LiveData, WorkManager).</p>
+        <p class="no-indent">• Thiết kế và cài đặt hệ thống Backend RESTful API bằng Node.js/Express kết nối CSDL Server MySQL/MongoDB.</p>
+        <p class="no-indent">• Xây dựng đầy đủ các phân hệ chức năng cho ứng dụng Android: Đăng nhập/Đăng ký, Quản lý dự án, Quản lý công việc, Bình luận & Lịch sử, Thông báo chạy ngầm khi sắp hết hạn.</p>
+
+        <h2>1.3 Kế hoạch thực hiện</h2>
+        <p class="no-indent"><strong>Bảng 1.1: Kế hoạch thực hiện đề tài theo tuần</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Tuần</th>
+                    <th style="width: 40%;">Nội dung công việc</th>
+                    <th style="width: 30%;">Sản phẩm bàn giao</th>
+                    <th style="width: 15%;">Thực hiện</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">Tuần 1 - 2</td>
+                    <td>Khảo sát yêu cầu, phân tích hệ thống, thiết kế sơ đồ Use Case và DB ERD.</td>
+                    <td>Bản thiết kế Use Case & DB Schema</td>
+                    <td class="text-center">Phạm Anh Quốc</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Tuần 3 - 4</td>
+                    <td>Xây dựng Backend RESTful API (Node.js/Express) & Tạo DB MySQL/MongoDB.</td>
+                    <td>Hệ thống Backend API hoàn chỉnh</td>
+                    <td class="text-center">Phạm Anh Quốc</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Tuần 5 - 6</td>
+                    <td>Lập trình ứng dụng Android (Auth, Room DB, Retrofit, Layout UI).</td>
+                    <td>Ứng dụng Android chạy demo</td>
+                    <td class="text-center">Phạm Anh Quốc</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Tuần 7</td>
+                    <td>Tích hợp WorkManager (DeadlineWorker), bình luận task, lịch sử thao tác.</td>
+                    <td>Tính năng thông báo & tương tác</td>
+                    <td class="text-center">Phạm Anh Quốc</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Tuần 8</td>
+                    <td>Kiểm thử ứng dụng (Testing), sửa lỗi, hoàn thiện báo cáo Tiểu luận.</td>
+                    <td>File APK & Báo cáo Tiểu luận</td>
+                    <td class="text-center">Phạm Anh Quốc</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- CHƯƠNG 2 -->
+    <div class="page">
+        <h1>CHƯƠNG 2: CƠ SỞ LÝ THUYẾT</h1>
+        <h2>2.1 Node.js & Express RESTful API</h2>
+        <h3>2.1.1 Định nghĩa</h3>
+        <p>Node.js là một môi trường thực thi JavaScript bất đồng bộ mã nguồn mở chạy phía server, dựa trên V8 JavaScript Engine của Google. Express.js là framework tối giản và linh hoạt dành cho Node.js, cung cấp bộ tính năng phong phú giúp xây dựng các ứng dụng web và RESTful API nhanh chóng.</p>
+
+        <h2>2.2 Room Persistence Library & SQLite</h2>
+        <h3>2.2.1 Định nghĩa</h3>
+        <p>Room là thư viện lưu trữ thuộc bộ Android Jetpack, đóng vai trò như một lớp trừu tượng (Abstraction Layer) bao bọc SQLite. Room giúp lập trình viên truy xuất CSDL SQLite nội địa một cách an toàn và mạnh mẽ.</p>
+
+        <h2>2.3 Android Jetpack & WorkManager</h2>
+        <h3>2.3.1 Định nghĩa</h3>
+        <p>WorkManager là một thư viện thuộc Android Jetpack hỗ trợ lập lịch các tác vụ chạy ngầm bất đồng bộ tin cậy ngay cả khi ứng dụng bị đóng hoặc thiết bị khởi động lại (DeadlineWorker).</p>
+    </div>
+
+    <!-- CHƯƠNG 3 -->
+    <div class="page">
+        <h1>CHƯƠNG 3: PHÂN TÍCH, THIẾT KẾ VÀ CÀI ĐẶT HỆ THỐNG</h1>
+        <h2>3.1 Kiến trúc hệ thống</h2>
+        <p>Hệ thống ứng dụng Quản lý Dự án áp dụng mô hình Client - Server 2 tầng kết hợp mẫu kiến trúc MVVM (Model-View-ViewModel) phía Client:</p>
+        <p class="no-indent">• Phân hệ Android Client: Viết bằng Java Native. Sử dụng Room CSDL SQLite nội địa giúp ứng dụng hoạt động tức thì và hỗ trợ làm việc Offline. Sử dụng Retrofit 2 giao tiếp đồng bộ dữ liệu với Backend.</p>
+        <p class="no-indent">• Phân hệ Backend Server: Xây dựng bằng Node.js / Express Web API lắng nghe tại port 5001, chịu trách nhiệm xử lý logic nghiệp vụ và truy vấn CSDL Server MySQL/MongoDB.</p>
+
+        <h2>3.2 Mô hình hóa Cơ sở dữ liệu (Database Schema)</h2>
+        <p class="no-indent"><strong>Bảng 3.1: Cấu trúc bảng Task (Công việc trong Room DB)</strong></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên trường</th>
+                    <th>Kiểu dữ liệu</th>
+                    <th>Khóa</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center">taskId</td>
+                    <td class="text-center">INTEGER</td>
+                    <td class="text-center">PK</td>
+                    <td>Mã định danh công việc (Tự tăng)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">title</td>
+                    <td class="text-center">TEXT</td>
+                    <td class="text-center"></td>
+                    <td>Tiêu đề công việc</td>
+                </tr>
+                <tr>
+                    <td class="text-center">assignedUserId</td>
+                    <td class="text-center">INTEGER</td>
+                    <td class="text-center">FK</td>
+                    <td>Mã người được phân công</td>
+                </tr>
+                <tr>
+                    <td class="text-center">projectId</td>
+                    <td class="text-center">INTEGER</td>
+                    <td class="text-center">FK</td>
+                    <td>Mã dự án thuộc về</td>
+                </tr>
+                <tr>
+                    <td class="text-center">status</td>
+                    <td class="text-center">TEXT</td>
+                    <td class="text-center"></td>
+                    <td>Trạng thái (Pending/In Progress/Done)</td>
+                </tr>
+                <tr>
+                    <td class="text-center">dueDate</td>
+                    <td class="text-center">TEXT</td>
+                    <td class="text-center"></td>
+                    <td>Ngày hạn chót (Deadline)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>3.3 Mã nguồn xử lý thông báo chạy ngầm (DeadlineWorker.java)</h2>
+<pre>
+public class DeadlineWorker extends Worker {
+    public DeadlineWorker(@NonNull Context context, @NonNull WorkerParameters params) {
+        super(context, params);
+    }
+    @NonNull
+    @Override
+    public Result doWork() {
+        sendNotification("Cảnh báo Deadline!", "Bạn có công việc sắp đến hạn chót. Hãy kiểm tra ngay!");
+        return Result.success();
+    }
+    private void sendNotification(String title, String message) {
+        NotificationManager manager = (NotificationManager) getApplicationContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "deadline_channel")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true);
+        if (manager != null) manager.notify((int) System.currentTimeMillis(), builder.build());
+    }
+}
+</pre>
+    </div>
+
+    <!-- CHƯƠNG 4 & TÀI LIỆU THAM KHẢO -->
+    <div class="page">
+        <h1>CHƯƠNG 4: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN</h1>
+        <h2>4.1 Kết quả đạt được</h2>
+        <p>1. Xây dựng ứng dụng Android Native hoàn chỉnh, chạy mượt mà trên thiết bị Android, giao diện thiết kế theo chuẩn Material Design trực quan.</p>
+        <p>2. Triển khai thành công CSDL SQLite nội địa qua thư viện Room DB với đầy đủ 6 thực thể quan trọng (User, Project, ProjectMember, Task, Comment, History).</p>
+        <p>3. Xây dựng hoàn chỉnh hệ thống RESTful API Backend bằng Node.js/Express kết nối CSDL MySQL/MongoDB.</p>
+        <p>4. Tích hợp thành công Android WorkManager (DeadlineWorker) tự động phát cảnh báo khi task sắp đến deadline.</p>
+
+        <h1>DANH MỤC TÀI LIỆU THAM KHẢO</h1>
+        <p class="no-indent">1. Google Developers (2024), <em>Android Developers Documentation - Jetpack Architecture Components</em>, truy cập ngày 05/08/2026 tại https://developer.android.com/topic/architecture</p>
+        <p class="no-indent">2. Node.js Foundation (2024), <em>Node.js v20.x Documentation & Express Framework Guide</em>, truy cập ngày 06/08/2026 tại https://nodejs.org/en/docs/</p>
+        <p class="no-indent">3. Square (2024), <em>Retrofit: A type-safe HTTP client for Android and Java</em>, truy cập ngày 08/08/2026 tại https://square.github.io/retrofit/</p>
+    </div>
+
+</body>
+</html>
