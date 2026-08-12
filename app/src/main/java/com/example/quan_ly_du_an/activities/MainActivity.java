@@ -15,8 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.quan_ly_du_an.R;
 import com.example.quan_ly_du_an.adapter.TaskAdapter;
-import com.example.quan_ly_du_an.api.MongoApiService;
-import com.example.quan_ly_du_an.api.RetrofitClient;
 import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.databinding.ActivityMainBinding;
 import com.example.quan_ly_du_an.feature_project.ui.ProjectSharedViewModel;
@@ -31,10 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskClickListener {
 
@@ -71,11 +65,59 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         showTab(R.id.nav_home);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshTaskData();
+    }
+
+    private void refreshTaskData() {
+        SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        int userId = sharedPref.getInt("USER_ID", -1);
+        if (userId != -1 && db != null) {
+            db.taskDao().getAllTasksForUser(userId).observe(this, tasks -> {
+                if (tasks != null) {
+                    currentFullList = tasks;
+                    if (taskAdapter != null) taskAdapter.updateData(tasks);
+                    if (binding != null && binding.layoutTasks != null) {
+                        if (tasks.isEmpty()) {
+                            binding.layoutTasks.layoutEmpty.setVisibility(View.VISIBLE);
+                            binding.layoutTasks.rvTask.setVisibility(View.GONE);
+                        } else {
+                            binding.layoutTasks.layoutEmpty.setVisibility(View.GONE);
+                            binding.layoutTasks.rvTask.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            });
+
+            db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
+                if (tasks != null && recentTaskAdapter != null) {
+                    recentTaskAdapter.updateData(tasks);
+                }
+            });
+        }
+    }
+
     private void initHomeTab() {
         // 1. Setup RecyclerView cho Dự án gần đây
         recentProjectAdapter = new ProjectAdapter(projectWithRole -> {
             binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
             projectSharedViewModel.selectProject(projectWithRole);
+        });
+        recentProjectAdapter.setOnProjectLongClickListener(projectWithRole -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Xóa dự án")
+                    .setMessage("Bạn có chắc chắn muốn xóa dự án '" + projectWithRole.title + "' không? Hành động này sẽ xóa toàn bộ thành viên và công việc thuộc dự án này.")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel homeViewModel = 
+                                new androidx.lifecycle.ViewModelProvider(this).get(com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel.class);
+                        homeViewModel.deleteProject(projectWithRole.projectId, () -> {
+                            Toast.makeText(this, "Đã xóa dự án '" + projectWithRole.title + "'", Toast.LENGTH_SHORT).show();
+                        });
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
         });
         binding.rvRecentProjects.setLayoutManager(new LinearLayoutManager(this));
         binding.rvRecentProjects.setAdapter(recentProjectAdapter);
@@ -98,153 +140,160 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("USER_ID", -1);
 
-        // Hiển thị Admin Control Panel nếu là Admin hệ thống
-        if (userId == 999) {
-            binding.layoutAdminPanel.setVisibility(View.VISIBLE);
-            binding.btnAdminManageUsers.setOnClickListener(v -> {
-                executorService.execute(() -> {
-                    List<User> userList = db.userDao().getAllUsers();
-                    StringBuilder sb = new StringBuilder("Danh sách tài khoản hệ thống (" + userList.size() + "):\n");
-                    for (User u : userList) {
-                        sb.append("• ").append(u.getName()).append(" (").append(u.getEmail()).append(")\n");
-                    }
-                    runOnUiThread(() -> {
-                        new androidx.appcompat.app.AlertDialog.Builder(this)
-                                .setTitle("👥 Quản Lý Người Dùng")
-                                .setMessage(sb.toString())
-                                .setPositiveButton("Đóng", null)
-                                .show();
-                    });
-                });
-            });
+        executorService.execute(() -> {
+            User currentUser = db.userDao().getUserById(userId);
+            boolean isAdmin = (userId == 999) || (currentUser != null && "ADMIN".equalsIgnoreCase(currentUser.getRole()));
 
-            binding.btnAdminAllProjects.setOnClickListener(v -> {
-                binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
-            });
-
-            // Tải thống kê toàn hệ thống cho Admin
-            executorService.execute(() -> {
-                int totalUsers = db.userDao().getTotalUsersCount();
-                int totalProjects = db.projectDao().getTotalProjectsCount();
-                int totalTasks = db.taskDao().getTotalTasksCount();
-
-                runOnUiThread(() -> {
-                    binding.tvAdminTotalUsers.setText(String.valueOf(totalUsers));
-                    binding.tvAdminTotalProjects.setText(String.valueOf(totalProjects));
-                    binding.tvAdminTotalTasks.setText(String.valueOf(totalTasks));
-                });
-            });
-        } else {
-            binding.layoutAdminPanel.setVisibility(View.GONE);
-        }
-
-        if (userId == 999) {
-            // Admin: Lấy 3 dự án mới nhất của TOÀN BỘ NHÂN VIÊN
-            db.projectDao().getAllLatestProjectsForAdmin(3).observe(this, projects -> {
-                if (projects != null) {
-                    recentProjectAdapter.setProjects(projects);
-                    executorService.execute(() -> {
-                        int count = db.projectDao().getTotalProjectsCount();
-                        runOnUiThread(() -> {
-                            binding.tvCountProjects.setText(String.valueOf(count));
-                            binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
+            runOnUiThread(() -> {
+                if (isAdmin) {
+                    binding.layoutAdminPanel.setVisibility(View.VISIBLE);
+                    binding.btnAdminManageUsers.setOnClickListener(v -> {
+                        executorService.execute(() -> {
+                            List<User> userList = db.userDao().getAllUsers();
+                            StringBuilder sb = new StringBuilder("Danh sách tài khoản hệ thống (" + userList.size() + "):\n");
+                            for (User u : userList) {
+                                sb.append("• ").append(u.getName()).append(" (").append(u.getEmail()).append(") - ").append(u.getRole() != null ? u.getRole() : "Member").append("\n");
+                            }
+                            runOnUiThread(() -> {
+                                new androidx.appcompat.app.AlertDialog.Builder(this)
+                                        .setTitle("👥 Quản Lý Người Dùng")
+                                        .setMessage(sb.toString())
+                                        .setPositiveButton("Đóng", null)
+                                        .show();
+                            });
                         });
                     });
-                }
-            });
 
-            // Admin: Lấy 3 công việc mới nhất của TOÀN BỘ NHÂN VIÊN
-            db.taskDao().getLatestTasks(3).observe(this, tasks -> {
-                if (tasks != null) {
-                    recentTaskAdapter.updateData(tasks);
-                }
-            });
+                    binding.btnAdminAllProjects.setOnClickListener(v -> {
+                        binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
+                    });
 
-            // Admin: Cập nhật tổng số công việc của TOÀN BỘ NHÂN VIÊN
-            db.taskDao().getAllTasks().observe(this, allTasks -> {
-                if (allTasks != null) {
-                    int total = allTasks.size();
-                    int completed = 0;
-                    int pending = 0;
-                    int highPriority = 0;
-
-                    for (Task t : allTasks) {
-                        if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
-                            completed++;
-                        } else {
-                            pending++;
-                        }
-                        if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
-                            highPriority++;
-                        }
-                    }
-
-                    binding.tvCountTasks.setText(String.valueOf(pending));
-                    binding.tvCountCompletedTasks.setText(String.valueOf(completed));
-                    binding.tvCountHighTasks.setText(String.valueOf(highPriority));
-
-                    binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
-
-                    int percent = (total > 0) ? (completed * 100 / total) : 0;
-                    binding.pbOverallProgress.setProgress(percent);
-                    binding.tvProgressPercent.setText(percent + "%");
-                    binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
-                }
-            });
-        } else if (userId != -1) {
-            // User thường: Lấy 3 dự án mới nhất của chính User đó
-            db.projectDao().getLatestProjectsForUser((long) userId, 3).observe(this, projects -> {
-                if (projects != null) {
-                    recentProjectAdapter.setProjects(projects);
+                    // Tải thống kê toàn hệ thống cho Admin
                     executorService.execute(() -> {
-                        int count = db.projectDao().getProjectsForUser((long) userId).size();
+                        int totalUsers = db.userDao().getTotalUsersCount();
+                        int totalProjects = db.projectDao().getTotalProjectsCount();
+                        int totalTasks = db.taskDao().getTotalTasksCount();
+
                         runOnUiThread(() -> {
-                            binding.tvCountProjects.setText(String.valueOf(count));
-                            binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
+                            binding.tvAdminTotalUsers.setText(String.valueOf(totalUsers));
+                            binding.tvAdminTotalProjects.setText(String.valueOf(totalProjects));
+                            binding.tvAdminTotalTasks.setText(String.valueOf(totalTasks));
                         });
                     });
-                }
-            });
 
-            // User thường: Lấy 3 công việc mới nhất của chính User đó
-            db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
-                if (tasks != null) {
-                    recentTaskAdapter.updateData(tasks);
-                }
-            });
-
-            // User thường: Cập nhật tổng số công việc cá nhân
-            db.taskDao().getAllTasksForUser(userId).observe(this, allTasks -> {
-                if (allTasks != null) {
-                    int total = allTasks.size();
-                    int completed = 0;
-                    int pending = 0;
-                    int highPriority = 0;
-
-                    for (Task t : allTasks) {
-                        if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
-                            completed++;
-                        } else {
-                            pending++;
+                    // Admin: Lấy 3 dự án mới nhất của TOÀN BỘ NHÂN VIÊN
+                    db.projectDao().getAllLatestProjectsForAdmin(3).observe(this, projects -> {
+                        if (projects != null) {
+                            recentProjectAdapter.setProjects(projects);
+                            executorService.execute(() -> {
+                                int count = db.projectDao().getTotalProjectsCount();
+                                runOnUiThread(() -> {
+                                    binding.tvCountProjects.setText(String.valueOf(count));
+                                    binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
+                                });
+                            });
                         }
-                        if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
-                            highPriority++;
+                    });
+
+                    // Admin: Lấy 3 công việc mới nhất của TOÀN BỘ NHÂN VIÊN
+                    db.taskDao().getLatestTasks(3).observe(this, tasks -> {
+                        if (tasks != null) {
+                            recentTaskAdapter.updateData(tasks);
                         }
+                    });
+
+                    // Admin: Cập nhật tổng số công việc của TOÀN BỘ NHÂN VIÊN
+                    db.taskDao().getAllTasks().observe(this, allTasks -> {
+                        if (allTasks != null) {
+                            int total = allTasks.size();
+                            int completed = 0;
+                            int pending = 0;
+                            int highPriority = 0;
+
+                            for (Task t : allTasks) {
+                                if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
+                                    completed++;
+                                } else {
+                                    pending++;
+                                }
+                                if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
+                                    highPriority++;
+                                }
+                            }
+
+                            binding.tvCountTasks.setText(String.valueOf(pending));
+                            binding.tvCountCompletedTasks.setText(String.valueOf(completed));
+                            binding.tvCountHighTasks.setText(String.valueOf(highPriority));
+
+                            binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
+
+                            int percent = (total > 0) ? (completed * 100 / total) : 0;
+                            binding.pbOverallProgress.setProgress(percent);
+                            binding.tvProgressPercent.setText(percent + "%");
+                            binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
+                        }
+                    });
+                } else {
+                    binding.layoutAdminPanel.setVisibility(View.GONE);
+
+                    // User thường: Lấy 3 công việc mới nhất của chính User đó
+                    db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
+                        if (tasks != null) {
+                            recentTaskAdapter.updateData(tasks);
+                        }
+                    });
+
+                    // User thường: Cập nhật tổng số công việc cá nhân
+                    db.taskDao().getAllTasksForUser(userId).observe(this, allTasks -> {
+                        if (allTasks != null) {
+                            int total = allTasks.size();
+                            int completed = 0;
+                            int pending = 0;
+                            int highPriority = 0;
+
+                            for (Task t : allTasks) {
+                                if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
+                                    completed++;
+                                } else {
+                                    pending++;
+                                }
+                                if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
+                                    highPriority++;
+                                }
+                            }
+
+                            binding.tvCountTasks.setText(String.valueOf(pending));
+                            binding.tvCountCompletedTasks.setText(String.valueOf(completed));
+                            binding.tvCountHighTasks.setText(String.valueOf(highPriority));
+
+                            binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
+
+                            int percent = (total > 0) ? (completed * 100 / total) : 0;
+                            binding.pbOverallProgress.setProgress(percent);
+                            binding.tvProgressPercent.setText(percent + "%");
+                            binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
+                        }
+                    });
+                }
+
+                // Cả Admin và User thường: Quan sát HomeViewModel để đồng bộ dữ liệu dự án giữa các tab
+                com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel homeViewModel = new androidx.lifecycle.ViewModelProvider(this).get(com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel.class);
+                homeViewModel.getUserProjects().observe(this, projects -> {
+                    if (projects != null) {
+                        java.util.List<com.example.quan_ly_du_an.model.ProjectWithRole> recentProjects = new java.util.ArrayList<>();
+                        int limit = Math.min(3, projects.size());
+                        for (int i = 0; i < limit; i++) {
+                            recentProjects.add(projects.get(i));
+                        }
+                        recentProjectAdapter.setProjects(recentProjects);
+                        
+                        int count = projects.size();
+                        binding.tvCountProjects.setText(String.valueOf(count));
+                        binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
                     }
-
-                    binding.tvCountTasks.setText(String.valueOf(pending));
-                    binding.tvCountCompletedTasks.setText(String.valueOf(completed));
-                    binding.tvCountHighTasks.setText(String.valueOf(highPriority));
-
-                    binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
-
-                    int percent = (total > 0) ? (completed * 100 / total) : 0;
-                    binding.pbOverallProgress.setProgress(percent);
-                    binding.tvProgressPercent.setText(percent + "%");
-                    binding.layoutProfile.tvProfileStatEfficiency.setText(percent + "%");
-                }
+                });
             });
-        }
+        });
     }
 
     private void setupProjectNavigationSync() {
@@ -257,8 +306,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 // Mở trực tiếp ProjectDetailFragment
                 ProjectWithRole selected = projectSharedViewModel.getSelectedProject().getValue();
                 if (selected != null) {
-                    com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment fragment =
-                            com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment.newInstance(
+                    com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment fragment = com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment
+                            .newInstance(
                                     selected.projectId,
                                     selected.title,
                                     selected.role);
@@ -284,15 +333,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 runOnUiThread(() -> {
                     if (user != null) {
                         String name = user.getName();
-                        binding.tvHomeGreeting.setText("Xin chào, " + name + "! 👋");
+                        binding.tvHomeGreeting.setText("Xin chào, " + name + "!");
                         binding.layoutProfile.tvProfileName.setText(name);
                         binding.layoutProfile.tvProfileEmail.setText(user.getEmail());
                         binding.layoutProfile.tvProfileRole.setText("⚡ Thành viên chính thức");
                     } else if (userId == 999) {
-                        binding.tvHomeGreeting.setText("👑 Xin chào, Admin Quản Trị! 👑");
+                        binding.tvHomeGreeting.setText("Xin chào, Quản trị viên!");
                         binding.layoutProfile.tvProfileName.setText("Quản trị viên hệ thống");
                         binding.layoutProfile.tvProfileEmail.setText("admin@system.com");
-                        binding.layoutProfile.tvProfileRole.setText("👑 QUẢN TRỊ VIÊN TỐI CAO");
+                        binding.layoutProfile.tvProfileRole.setText("QUẢN TRỊ VIÊN TỐI CAO");
                     }
                 });
             });
@@ -301,61 +350,58 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private void prepopulateSampleData() {
         executorService.execute(() -> {
+            // 0. Tạo Admin account
+            User adminUser = db.userDao().getUserById(999);
+            if (adminUser == null) {
+                adminUser = new User("Quản trị viên", "admin", "123456");
+                adminUser.setId(999);
+                adminUser.setRole("ADMIN");
+                db.userDao().insertUser(adminUser);
+            }
+
             // 1. Tạo Nguyen Van B
             User userB = db.userDao().getUserByEmail("b@email.com");
             if (userB == null) {
                 userB = new User("Nguyen Van B", "b@email.com", "123456");
                 db.userDao().insertUser(userB);
                 userB = db.userDao().getUserByEmail("b@email.com");
+            }
 
-                // PUSH TO BACKEND NODEJS
-                RetrofitClient.getMongoService().registerUser(userB).enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        if (response.isSuccessful()) {
-                            android.util.Log.d("BACKEND", "User B pushed successfully!");
-                        }
-                    }
+            // 2. Tạo Member Jerry
+            User jerry = db.userDao().getUserByEmail("jerry@gmail.com");
+            if (jerry == null) {
+                jerry = new User("Jerry Member", "jerry@gmail.com", "123456");
+                jerry.setRole("MEMBER");
+                db.userDao().insertUser(jerry);
+            }
 
-                    @Override
-                    public void onFailure(Call<User> call, Throwable t) {
-                        android.util.Log.e("BACKEND", "Network error pushing user: " + t.getMessage());
-                    }
-                });
+            // 3. Tạo Leader Tom
+            User tom = db.userDao().getUserByEmail("tom@gmail.com");
+            if (tom == null) {
+                tom = new User("Tom Leader", "tom@gmail.com", "123456");
+                tom.setRole("LEADER");
+                db.userDao().insertUser(tom);
+            }
+
+            // 4. Tạo Admin QTV
+            User qtv = db.userDao().getUserByEmail("qtv@gmail.com");
+            if (qtv == null) {
+                qtv = new User("Quản trị viên (QTV)", "qtv@gmail.com", "123456");
+                qtv.setRole("ADMIN");
+                db.userDao().insertUser(qtv);
             }
 
             final User finalUserB = userB;
             // 2. Tạo Task mẫu
             try (android.database.Cursor cursor = db.query("SELECT COUNT(*) FROM tasks", null)) {
                 if (cursor.moveToFirst() && cursor.getInt(0) == 0) {
-                    Task t1 = new Task(0, 1, finalUserB.getId(), "Thiết kế UI cho mobile", "Tạo các màn hình Dashboard và Profile trên nền trắng", "Cao", "Doing", "30/07/2026");
-                    Task t2 = new Task(0, 1, finalUserB.getId(), "Kết nối MongoDB", "Cấu hình Retrofit và Data API cho dự án", "Trung bình", "Tự do", "05/08/2026");
+                    Task t1 = new Task(0, 1, finalUserB.getId(), "Thiết kế UI cho mobile",
+                            "Tạo các màn hình Dashboard và Profile trên nền trắng", "Cao", "Doing", "30/07/2026");
+                    Task t2 = new Task(0, 1, finalUserB.getId(), "Kết nối Database",
+                            "Cấu hình SQLite Database cho dự án", "Trung bình", "Tự do", "05/08/2026");
 
                     db.taskDao().insert(t1);
                     db.taskDao().insert(t2);
-
-                    // PUSH TASKS TO BACKEND NODEJS
-                    MongoApiService service = RetrofitClient.getMongoService();
-                    service.createTask(t1).enqueue(new Callback<Task>() {
-                        @Override
-                        public void onResponse(Call<Task> call, Response<Task> response) {
-                            android.util.Log.d("BACKEND", "Task 1 status: " + response.code());
-                        }
-
-                        @Override
-                        public void onFailure(Call<Task> call, Throwable t) {
-                        }
-                    });
-                    service.createTask(t2).enqueue(new Callback<Task>() {
-                        @Override
-                        public void onResponse(Call<Task> call, Response<Task> response) {
-                            android.util.Log.d("BACKEND", "Task 2 status: " + response.code());
-                        }
-
-                        @Override
-                        public void onFailure(Call<Task> call, Throwable t) {
-                        }
-                    });
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -425,7 +471,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 taskAdapter.filterByStatus("Tất cả");
             } else {
                 Chip chip = findViewById(checkedIds.get(0));
-                if (chip != null) taskAdapter.filterByStatus(chip.getText().toString());
+                if (chip != null)
+                    taskAdapter.filterByStatus(chip.getText().toString());
             }
         });
 
@@ -435,7 +482,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     taskAdapter.filterByPriority("Tất cả ưu tiên");
                 } else {
                     Chip chip = findViewById(checkedIds.get(0));
-                    if (chip != null) taskAdapter.filterByPriority(chip.getText().toString());
+                    if (chip != null)
+                        taskAdapter.filterByPriority(chip.getText().toString());
                 }
             });
         }
@@ -579,9 +627,11 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             binding.layoutTasks.getRoot().setVisibility(View.VISIBLE);
         } else if (itemId == R.id.nav_team) {
             binding.layoutTeam.setVisibility(View.VISIBLE);
-            getSupportFragmentManager().popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().popBackStack(null,
+                    androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.layoutTeam, new com.example.quan_ly_du_an.feature_project.ui.home.TeamProjectsFragment())
+                    .replace(R.id.layoutTeam,
+                            new com.example.quan_ly_du_an.feature_project.ui.home.TeamProjectsFragment())
                     .commit();
         } else if (itemId == R.id.nav_settings) {
             binding.layoutProfile.getRoot().setVisibility(View.VISIBLE);

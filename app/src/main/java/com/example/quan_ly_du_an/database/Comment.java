@@ -1,11 +1,10 @@
 package com.example.quan_ly_du_an.database;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "comments")
+/**
+ * Entity Comment — POJO thuần (không còn Room annotations).
+ * Tương ứng bảng "comments" trong SQLite.
+ */
 public class Comment {
-    @PrimaryKey(autoGenerate = true)
     public int commentId;
     public int taskId;
     public int userId;

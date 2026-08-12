@@ -51,18 +51,10 @@
                             android:id="@+id/tvHomeGreeting"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Xin chào! 👋"
+                            android:text="Xin chào!"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="#1A1C1E" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Chúc bạn một ngày làm việc hiệu quả"
-                            android:textSize="13sp"
-                            android:textColor="#74777F" />
                     </LinearLayout>
 
                     <ImageButton
@@ -92,7 +84,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="👑 BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN"
+                        android:text="BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN"
                         android:textColor="#B78103"
                         android:textSize="15sp"
                         android:textStyle="bold" />

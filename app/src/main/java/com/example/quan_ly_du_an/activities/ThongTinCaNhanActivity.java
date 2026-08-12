@@ -66,7 +66,7 @@ public class ThongTinCaNhanActivity extends AppCompatActivity {
                 } else if (userId == 999) {
                     binding.edtName.setText("Quản trị viên");
                     binding.edtEmail.setText("admin@system.com");
-                    binding.tvUserRoleBadge.setText("👑 Vai trò: Admin");
+                    binding.tvUserRoleBadge.setText("Vai trò: Admin");
                     binding.tvUserIdDisplay.setText("Mã tài khoản: #999");
                 } else {
                     Toast.makeText(this, "Không tìm thấy thông tin tài khoản!", Toast.LENGTH_SHORT).show();

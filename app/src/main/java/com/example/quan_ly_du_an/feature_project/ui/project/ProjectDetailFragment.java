@@ -278,8 +278,8 @@ public class ProjectDetailFragment extends Fragment {
             LinearLayout infoLayout = new LinearLayout(context);
             infoLayout.setOrientation(LinearLayout.VERTICAL);
             LinearLayout.LayoutParams infoParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
-            infoParams.leftMargin = dpToPx(context, 12);
-            infoParams.rightMargin = dpToPx(context, 12);
+            infoParams.leftMargin = dpToPx(context, 10);
+            infoParams.rightMargin = dpToPx(context, 8);
             infoLayout.setLayoutParams(infoParams);
             horizontalLayout.addView(infoLayout);
             
@@ -287,31 +287,44 @@ public class ProjectDetailFragment extends Fragment {
             tvName.setTextColor(Color.parseColor("#212121"));
             tvName.setTextSize(15);
             tvName.setTypeface(null, android.graphics.Typeface.BOLD);
+            tvName.setSingleLine(true);
+            tvName.setEllipsize(android.text.TextUtils.TruncateAt.END);
             infoLayout.addView(tvName);
             
             TextView tvEmail = new TextView(context);
             tvEmail.setTextColor(Color.parseColor("#757575"));
             tvEmail.setTextSize(12);
             tvEmail.setPadding(0, 1, 0, 3);
+            tvEmail.setSingleLine(true);
+            tvEmail.setEllipsize(android.text.TextUtils.TruncateAt.END);
             infoLayout.addView(tvEmail);
             
             TextView tvTaskInfo = new TextView(context);
             tvTaskInfo.setTextColor(Color.parseColor("#2E7D32"));
             tvTaskInfo.setTextSize(11);
             tvTaskInfo.setTypeface(null, android.graphics.Typeface.ITALIC);
+            tvTaskInfo.setSingleLine(true);
+            tvTaskInfo.setEllipsize(android.text.TextUtils.TruncateAt.END);
             infoLayout.addView(tvTaskInfo);
             
             // 3. Right Badge & Delete Layout
             LinearLayout rightLayout = new LinearLayout(context);
             rightLayout.setOrientation(LinearLayout.VERTICAL);
             rightLayout.setGravity(android.view.Gravity.END | android.view.Gravity.CENTER_VERTICAL);
-            rightLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            LinearLayout.LayoutParams rightParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            rightLayout.setLayoutParams(rightParams);
             horizontalLayout.addView(rightLayout);
             
             TextView tvRole = new TextView(context);
-            tvRole.setPadding(dpToPx(context, 6), dpToPx(context, 3), dpToPx(context, 6), dpToPx(context, 3));
-            tvRole.setTextSize(10);
+            LinearLayout.LayoutParams roleParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            roleParams.gravity = android.view.Gravity.END;
+            tvRole.setLayoutParams(roleParams);
+            tvRole.setPadding(dpToPx(context, 10), dpToPx(context, 4), dpToPx(context, 10), dpToPx(context, 4));
+            tvRole.setTextSize(11);
             tvRole.setTypeface(null, android.graphics.Typeface.BOLD);
+            tvRole.setSingleLine(true);
+            tvRole.setGravity(android.view.Gravity.CENTER);
+            tvRole.setMinWidth(dpToPx(context, 65));
             rightLayout.addView(tvRole);
             
             android.widget.ImageView ivDelete = new android.widget.ImageView(context);
@@ -355,15 +368,16 @@ public class ProjectDetailFragment extends Fragment {
                 holder.tvTaskInfo.setTextColor(Color.parseColor("#757575")); // Gray
             }
             
-            // Set Role badge
-            holder.tvRole.setText(item.role);
+            // Set Role badge (Full text MEMBER / LEADER / ADMIN)
+            String roleStr = item.role != null ? item.role.trim().toUpperCase() : "MEMBER";
+            holder.tvRole.setText(roleStr);
             GradientDrawable gdRole = new GradientDrawable();
             gdRole.setCornerRadius(dpToPx(holder.itemView.getContext(), 6));
             
-            if ("ADMIN".equalsIgnoreCase(item.role)) {
+            if ("ADMIN".equalsIgnoreCase(roleStr)) {
                 holder.tvRole.setTextColor(Color.parseColor("#D32F2F"));
                 gdRole.setColor(Color.parseColor("#FFEBEE"));
-            } else if ("LEADER".equalsIgnoreCase(item.role)) {
+            } else if ("LEADER".equalsIgnoreCase(roleStr)) {
                 holder.tvRole.setTextColor(Color.parseColor("#F57C00"));
                 gdRole.setColor(Color.parseColor("#FFF3E0"));
             } else {

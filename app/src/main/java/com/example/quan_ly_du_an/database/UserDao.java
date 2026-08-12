@@ -1,36 +1,139 @@
 package com.example.quan_ly_du_an.database;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
 import com.example.quan_ly_du_an.model.User;
 
-import androidx.room.Update;
+import java.util.ArrayList;
+import java.util.List;
 
-@Dao
-public interface UserDao {
-    @Insert
-    void insertUser(User user);
+public class UserDao {
 
-    @Update
-    void updateUser(User user);
+    private final SQLiteOpenHelper dbHelper;
 
-    @Query("UPDATE users SET password = :newPassword WHERE id = :userId")
-    void updatePassword(int userId, String newPassword);
+    public UserDao(SQLiteOpenHelper dbHelper) {
+        this.dbHelper = dbHelper;
+    }
 
-    @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
-    User login(String email, String password);
+    public void insertUser(User user) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        if (user.getId() > 0) {
+            cv.put("id", user.getId());
+        }
+        cv.put("name", user.getName());
+        cv.put("email", user.getEmail());
+        cv.put("password", user.getPassword());
+        cv.put("avatar", user.getAvatar());
+        cv.put("role", user.getRole());
+        long id = db.insertWithOnConflict("users", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        if (id != -1 && user.getId() == 0) {
+            user.setId((int) id);
+        }
+    }
 
-    @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
-    User getUserByEmail(String email);
+    public User login(String email, String password) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM users WHERE email = ? AND password = ? LIMIT 1",
+                new String[]{email, password});
+        User user = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                user = cursorToUser(cursor);
+            }
+            cursor.close();
+        }
+        return user;
+    }
 
-    // THÊM HÀM NÀY ĐỂ TÌM USER THEO ID ĐANG ĐĂNG NHẬP
-    @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
-    User getUserById(int userId);
+    public User getUserByEmail(String email) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM users WHERE email = ? LIMIT 1",
+                new String[]{email});
+        User user = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                user = cursorToUser(cursor);
+            }
+            cursor.close();
+        }
+        return user;
+    }
 
-    @Query("SELECT COUNT(*) FROM users")
-    int getTotalUsersCount();
+    public User getUserById(int userId) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT * FROM users WHERE id = ? LIMIT 1",
+                new String[]{String.valueOf(userId)});
+        User user = null;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                user = cursorToUser(cursor);
+            }
+            cursor.close();
+        }
+        return user;
+    }
 
-    @Query("SELECT * FROM users ORDER BY id DESC")
-    java.util.List<User> getAllUsers();
+    public void updatePassword(int userId, String newPassword) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("password", newPassword);
+        db.update("users", cv, "id = ?", new String[]{String.valueOf(userId)});
+    }
+
+    public void updateUser(User user) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("name", user.getName());
+        cv.put("email", user.getEmail());
+        if (user.getPassword() != null) {
+            cv.put("password", user.getPassword());
+        }
+        cv.put("avatar", user.getAvatar());
+        cv.put("role", user.getRole());
+        db.update("users", cv, "id = ?", new String[]{String.valueOf(user.getId())});
+    }
+
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM users", null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                list.add(cursorToUser(cursor));
+            }
+            cursor.close();
+        }
+        return list;
+    }
+
+    public int getTotalUsersCount() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM users", null);
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+        }
+        return count;
+    }
+
+    private User cursorToUser(Cursor cursor) {
+        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+        String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+        String password = cursor.getString(cursor.getColumnIndexOrThrow("password"));
+        User user = new User(name, email, password);
+        user.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+        user.setAvatar(cursor.getString(cursor.getColumnIndexOrThrow("avatar")));
+        user.setRole(cursor.getString(cursor.getColumnIndexOrThrow("role")));
+        return user;
+    }
 }
