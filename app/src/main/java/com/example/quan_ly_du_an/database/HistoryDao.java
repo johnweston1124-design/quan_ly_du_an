@@ -11,18 +11,17 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.quan_ly_du_an.model.History;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * DAO cho bảng history.
- * Giữ nguyên tên method cũ từ Room interface.
- */
 public class HistoryDao {
 
     private final SQLiteOpenHelper dbHelper;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<Integer, MutableLiveData<List<History>>> liveDataMap = new HashMap<>();
 
     public HistoryDao(SQLiteOpenHelper dbHelper) {
         this.dbHelper = dbHelper;
@@ -38,11 +37,19 @@ public class HistoryDao {
         long id = db.insert("history", null, cv);
         if (id != -1) {
             history.setId((int) id);
+            refreshHistory(history.getUserId());
         }
     }
 
     public LiveData<List<History>> getAllHistoryForUser(int userId) {
-        MutableLiveData<List<History>> liveData = new MutableLiveData<>();
+        if (!liveDataMap.containsKey(userId)) {
+            liveDataMap.put(userId, new MutableLiveData<>());
+        }
+        refreshHistory(userId);
+        return liveDataMap.get(userId);
+    }
+
+    private void refreshHistory(int userId) {
         executor.execute(() -> {
             List<History> list = new ArrayList<>();
             SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -55,12 +62,12 @@ public class HistoryDao {
                 }
                 cursor.close();
             }
-            liveData.postValue(list);
+            MutableLiveData<List<History>> liveData = liveDataMap.get(userId);
+            if (liveData != null) {
+                liveData.postValue(list);
+            }
         });
-        return liveData;
     }
-
-    // --- Helper methods ---
 
     private History cursorToHistory(Cursor cursor) {
         String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));

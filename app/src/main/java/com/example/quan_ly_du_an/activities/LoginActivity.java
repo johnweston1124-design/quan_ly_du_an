@@ -11,7 +11,6 @@ import com.example.quan_ly_du_an.database.AppDatabase;
 import com.example.quan_ly_du_an.model.User;
 import com.example.quan_ly_du_an.databinding.ActivityLoginBinding;
 
-// Nhớ Import MainActivity từ đúng package nếu MainActivity nằm ở package khác
 import com.example.quan_ly_du_an.activities.MainActivity;
 
 import java.util.concurrent.ExecutorService;
@@ -43,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
 
         database = AppDatabase.getDatabase(this);
 
-        // Cấu hình Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("610134536543-iepm19bs8du5kjjel17ujssfl3guv3j8.apps.googleusercontent.com")
                 .requestEmail()
@@ -88,11 +86,9 @@ public class LoginActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             
-            // Lấy thông tin từ Google
             String email = account.getEmail();
             String displayName = account.getDisplayName();
             
-            // Xử lý đăng nhập vào hệ thống
             handleSocialLogin(email, displayName);
 
         } catch (ApiException e) {
@@ -116,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
         executorService.execute(() -> {
             User user = database.userDao().getUserByEmail(email);
             if (user == null) {
-                // Tạo user mới nếu chưa tồn tại
                 user = new User(name, email, "social_login_no_password");
                 database.userDao().insertUser(user);
                 user = database.userDao().getUserByEmail(email);

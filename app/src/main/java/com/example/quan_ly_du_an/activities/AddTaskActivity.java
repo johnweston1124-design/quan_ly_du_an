@@ -103,7 +103,6 @@ public class AddTaskActivity extends AppCompatActivity {
             status = ((Chip) findViewById(checkedStatusId)).getText().toString();
         }
 
-        // Lấy User ID của người đang đăng nhập
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         int currentUserId = sharedPref.getInt("USER_ID", -1);
 
@@ -126,7 +125,6 @@ public class AddTaskActivity extends AppCompatActivity {
                 db.taskDao().insert(task);
                 android.util.Log.d("ADD_TASK", "Task inserted successfully: " + title);
 
-                // LƯU VÀO LỊCH SỬ
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm",
                         java.util.Locale.getDefault());
                 String currentTime = sdf.format(new java.util.Date());

@@ -17,14 +17,12 @@ public class ThemeAndLocaleManager {
     public static void applyThemeAndLocale(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
-        // 1. Apply Dark Mode
         boolean isDarkMode = pref.getBoolean(KEY_DARK_MODE, false);
         int targetMode = isDarkMode ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
         if (AppCompatDelegate.getDefaultNightMode() != targetMode) {
             AppCompatDelegate.setDefaultNightMode(targetMode);
         }
 
-        // 2. Apply Locale
         String langCode = pref.getString(KEY_LOCALE, "vi");
         applyLocale(context, langCode);
     }

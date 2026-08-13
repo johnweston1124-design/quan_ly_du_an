@@ -9,18 +9,17 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * DAO cho bảng comments.
- * Giữ nguyên tên method cũ từ Room interface.
- */
 public class CommentDao {
 
     private final SQLiteOpenHelper dbHelper;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Map<Integer, MutableLiveData<List<Comment>>> liveDataMap = new HashMap<>();
 
     public CommentDao(SQLiteOpenHelper dbHelper) {
         this.dbHelper = dbHelper;
@@ -36,11 +35,19 @@ public class CommentDao {
         long id = db.insert("comments", null, cv);
         if (id != -1) {
             comment.commentId = (int) id;
+            refreshComments(comment.taskId);
         }
     }
 
     public LiveData<List<Comment>> getCommentsByTaskId(int taskId) {
-        MutableLiveData<List<Comment>> liveData = new MutableLiveData<>();
+        if (!liveDataMap.containsKey(taskId)) {
+            liveDataMap.put(taskId, new MutableLiveData<>());
+        }
+        refreshComments(taskId);
+        return liveDataMap.get(taskId);
+    }
+
+    private void refreshComments(int taskId) {
         executor.execute(() -> {
             List<Comment> comments = new ArrayList<>();
             SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -53,12 +60,12 @@ public class CommentDao {
                 }
                 cursor.close();
             }
-            liveData.postValue(comments);
+            MutableLiveData<List<Comment>> liveData = liveDataMap.get(taskId);
+            if (liveData != null) {
+                liveData.postValue(comments);
+            }
         });
-        return liveData;
     }
-
-    // --- Helper methods ---
 
     private Comment cursorToComment(Cursor cursor) {
         Comment comment = new Comment();

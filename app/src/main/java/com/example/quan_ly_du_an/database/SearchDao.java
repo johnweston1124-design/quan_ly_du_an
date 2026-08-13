@@ -12,10 +12,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * DAO cho tìm kiếm comments.
- * Giữ nguyên tên method cũ từ Room interface.
- */
 public class SearchDao {
 
     private final SQLiteOpenHelper dbHelper;

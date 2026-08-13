@@ -40,7 +40,7 @@ public class HomeViewModel extends AndroidViewModel {
     public void createProject(String title, String description, String startDate, String endDate, String status, int expectedMembers, Runnable onSuccess) {
         long userId = SessionManager.getCurrentUserId(getApplication());
         repository.createNewProject(title, description, startDate, endDate, status, expectedMembers, userId, () -> {
-            loadProjects(); // Cập nhật lại danh sách ngay sau khi tạo
+            loadProjects();
             if (onSuccess != null) onSuccess.run();
         }, msg -> _errorMessage.postValue(msg));
     }

@@ -33,8 +33,6 @@ public class ProjectRepository {
         this.executorService = Executors.newFixedThreadPool(4);
     }
 
-    // --- API CHO PHÂN CÔNG 2 (DỰ ÁN) ---
-
     public LiveData<List<ProjectWithRole>> getProjectsForUser(long userId) {
         MutableLiveData<List<ProjectWithRole>> liveData = new MutableLiveData<>();
         executorService.execute(() -> {
@@ -82,7 +80,6 @@ public class ProjectRepository {
         }
         executorService.execute(() -> {
             try {
-                // Đảm bảo user có tồn tại trong CSDL để tránh lỗi FOREIGN KEY constraint
                 if (userDao.getUserById((int) creatorUserId) == null) {
                     com.example.quan_ly_du_an.model.User dummyUser;
                     if (creatorUserId == 999) {
@@ -102,7 +99,6 @@ public class ProjectRepository {
                     ProjectMember adminMember = new ProjectMember(id, creatorUserId, "ADMIN");
                     projectMemberDao.insertProjectMember(adminMember);
                     
-                    // LƯU VÀO LỊCH SỬ
                     java.text.SimpleDateFormat timeSdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
                     String currentTime = timeSdf.format(new java.util.Date());
                     History history = new History("Tạo dự án mới", "Đã tạo dự án: " + title, currentTime, (int) creatorUserId);
@@ -147,8 +143,6 @@ public class ProjectRepository {
             }
         });
     }
-
-    // --- API CHO PHÂN CÔNG 3 (MEMBER) ---
 
     public LiveData<List<MemberWithRole>> getMembersByProjectId(long projectId) {
         MutableLiveData<List<MemberWithRole>> liveData = new MutableLiveData<>();

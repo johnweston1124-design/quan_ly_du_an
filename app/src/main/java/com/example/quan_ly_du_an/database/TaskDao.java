@@ -116,6 +116,25 @@ public class TaskDao {
         return liveData;
     }
 
+    // ==========================================
+    // ĐÂY LÀ HÀM TÌM KIẾM THỜI GIAN THỰC
+    // ==========================================
+    public List<Task> searchTasksForUserSync(int userId, String query) {
+        String wildcard = "%" + query + "%";
+        return queryTaskList(
+                "SELECT * FROM tasks WHERE (assignedUserId = ?) AND (title LIKE ? OR description LIKE ?) ORDER BY taskId DESC",
+                new String[]{String.valueOf(userId), wildcard, wildcard});
+    }
+
+    // ==========================================
+    // ĐÂY LÀ HÀM MỚI CHO DEADLINE WORKER CHẠY NGẦM
+    // ==========================================
+    public List<Task> getAllTasksForUserSync(int userId) {
+        return queryTaskList(
+                "SELECT * FROM tasks WHERE assignedUserId = ? ORDER BY taskId DESC",
+                new String[]{String.valueOf(userId)});
+    }
+
     public LiveData<List<Task>> getLatestTasks(int limit) {
         MutableLiveData<List<Task>> liveData = new MutableLiveData<>();
         executor.execute(() -> {

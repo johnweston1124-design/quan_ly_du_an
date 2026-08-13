@@ -5,7 +5,7 @@ public class ProjectWithRole {
     public String title;
     public String description;
     public String status;
-    public String role; // Quyền của User đang đăng nhập trong dự án này
+    public String role;
 
     public ProjectWithRole(long projectId, String title, String description, String status, String role) {
         this.projectId = projectId;

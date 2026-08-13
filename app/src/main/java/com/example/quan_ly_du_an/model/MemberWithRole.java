@@ -5,8 +5,8 @@ public class MemberWithRole {
     public String name;
     public String email;
     public String avatarUrl;
-    public String role; // Quyền của thành viên này trong dự án
-    public int taskCount; // Số lượng công việc được phân công trong dự án
+    public String role;
+    public int taskCount;
 
     public MemberWithRole(long userId, String name, String email, String avatarUrl, String role) {
         this.userId = userId;

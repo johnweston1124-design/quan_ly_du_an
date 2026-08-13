@@ -13,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import com.example.quan_ly_du_an.R;
 import com.example.quan_ly_du_an.adapter.TaskAdapter;
 import com.example.quan_ly_du_an.database.AppDatabase;
@@ -23,6 +27,7 @@ import com.example.quan_ly_du_an.feature_project.ui.home.ProjectAdapter;
 import com.example.quan_ly_du_an.model.ProjectWithRole;
 import com.example.quan_ly_du_an.model.Task;
 import com.example.quan_ly_du_an.model.User;
+import com.example.quan_ly_du_an.worker.DeadlineWorker;
 import com.google.android.material.chip.Chip;
 import com.example.quan_ly_du_an.utils.ThemeAndLocaleManager;
 
@@ -30,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTaskClickListener {
 
@@ -39,8 +45,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     private List<Task> currentFullList = new ArrayList<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private AppDatabase db;
-
-    // Adapters cho trang chủ
     private ProjectAdapter recentProjectAdapter;
     private TaskAdapter recentTaskAdapter;
 
@@ -51,6 +55,13 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
 
         db = AppDatabase.getDatabase(getApplicationContext());
 
@@ -63,7 +74,18 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         setupBottomNavigation();
         setupProjectNavigationSync();
 
-        // Mặc định hiện tab Home
+        PeriodicWorkRequest deadlineWorkRequest = new PeriodicWorkRequest.Builder(
+                DeadlineWorker.class,
+                2,
+                TimeUnit.HOURS
+        ).build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "DeadlineCheck",
+                ExistingPeriodicWorkPolicy.KEEP,
+                deadlineWorkRequest
+        );
+
         showTab(R.id.nav_home);
     }
 
@@ -102,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
     }
 
     private void initHomeTab() {
-        // 1. Setup RecyclerView cho Dự án gần đây
         recentProjectAdapter = new ProjectAdapter(projectWithRole -> {
             binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
             projectSharedViewModel.selectProject(projectWithRole);
@@ -112,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     .setTitle("Xóa dự án")
                     .setMessage("Bạn có chắc chắn muốn xóa dự án '" + projectWithRole.title + "' không? Hành động này sẽ xóa toàn bộ thành viên và công việc thuộc dự án này.")
                     .setPositiveButton("Xóa", (dialog, which) -> {
-                        com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel homeViewModel = 
+                        com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel homeViewModel =
                                 new androidx.lifecycle.ViewModelProvider(this).get(com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel.class);
                         homeViewModel.deleteProject(projectWithRole.projectId, () -> {
                             Toast.makeText(this, "Đã xóa dự án '" + projectWithRole.title + "'", Toast.LENGTH_SHORT).show();
@@ -124,12 +145,10 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         binding.rvRecentProjects.setLayoutManager(new LinearLayoutManager(this));
         binding.rvRecentProjects.setAdapter(recentProjectAdapter);
 
-        // 2. Setup RecyclerView cho Công việc mới nhất
         recentTaskAdapter = new TaskAdapter(new ArrayList<>(), this);
         binding.rvRecentTasks.setLayoutManager(new LinearLayoutManager(this));
         binding.rvRecentTasks.setAdapter(recentTaskAdapter);
 
-        // 3. Quick Action click listeners
         binding.btnQuickAddProject.setOnClickListener(v -> {
             binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
             binding.bottomNavigation.post(() -> {
@@ -144,9 +163,39 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         binding.btnQuickReport.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, LichSuActivity.class)));
         binding.btnSeeAllProjects.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_project));
         binding.btnSeeAllTasks.setOnClickListener(v -> binding.bottomNavigation.setSelectedItemId(R.id.nav_task));
-        binding.btnNotification.setOnClickListener(v -> Toast.makeText(this, "Không có thông báo mới nào", Toast.LENGTH_SHORT).show());
 
-        // 4. Quan sát dữ liệu
+        binding.btnNotification.setOnClickListener(v -> {
+            executorService.execute(() -> {
+                List<com.example.quan_ly_du_an.model.NotificationHistory> list = db.notificationDao().getAllSync();
+
+                runOnUiThread(() -> {
+                    if (list == null || list.isEmpty()) {
+                        Toast.makeText(this, "Không có thông báo nào", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String[] items = new String[list.size()];
+                    for (int i = 0; i < list.size(); i++) {
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM HH:mm", java.util.Locale.getDefault());
+                        String date = sdf.format(new java.util.Date(list.get(i).getTimestamp()));
+                        items[i] = "[" + date + "] " + list.get(i).getTitle() + "\n" + list.get(i).getContent();
+                    }
+
+                    new androidx.appcompat.app.AlertDialog.Builder(this)
+                            .setTitle("🔔 Lịch sử thông báo")
+                            .setItems(items, null)
+                            .setPositiveButton("Đóng", null)
+                            .setNeutralButton("Xóa tất cả", (dialog, which) -> {
+                                executorService.execute(() -> {
+                                    db.notificationDao().deleteAll();
+                                    runOnUiThread(() -> Toast.makeText(this, "Đã xóa lịch sử", Toast.LENGTH_SHORT).show());
+                                });
+                            })
+                            .show();
+                });
+            });
+        });
+
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("USER_ID", -1);
 
@@ -178,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
                     });
 
-                    // Tải thống kê toàn hệ thống cho Admin
                     executorService.execute(() -> {
                         int totalUsers = db.userDao().getTotalUsersCount();
                         int totalProjects = db.projectDao().getTotalProjectsCount();
@@ -191,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         });
                     });
 
-                    // Admin: Lấy 3 dự án mới nhất của TOÀN BỘ NHÂN VIÊN
                     db.projectDao().getAllLatestProjectsForAdmin(3).observe(this, projects -> {
                         if (projects != null) {
                             recentProjectAdapter.setProjects(projects);
@@ -205,14 +252,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         }
                     });
 
-                    // Admin: Lấy 3 công việc mới nhất của TOÀN BỘ NHÂN VIÊN
                     db.taskDao().getLatestTasks(3).observe(this, tasks -> {
                         if (tasks != null) {
                             recentTaskAdapter.updateData(tasks);
                         }
                     });
 
-                    // Admin: Cập nhật tổng số công việc của TOÀN BỘ NHÂN VIÊN
                     db.taskDao().getAllTasks().observe(this, allTasks -> {
                         if (allTasks != null) {
                             int total = allTasks.size();
@@ -245,14 +290,12 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 } else {
                     binding.layoutAdminPanel.setVisibility(View.GONE);
 
-                    // User thường: Lấy 3 công việc mới nhất của chính User đó
                     db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
                         if (tasks != null) {
                             recentTaskAdapter.updateData(tasks);
                         }
                     });
 
-                    // User thường: Cập nhật tổng số công việc cá nhân
                     db.taskDao().getAllTasksForUser(userId).observe(this, allTasks -> {
                         if (allTasks != null) {
                             int total = allTasks.size();
@@ -284,7 +327,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                     });
                 }
 
-                // Cả Admin và User thường: Quan sát HomeViewModel để đồng bộ dữ liệu dự án giữa các tab
                 com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel homeViewModel = new androidx.lifecycle.ViewModelProvider(this).get(com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel.class);
                 homeViewModel.getUserProjects().observe(this, projects -> {
                     if (projects != null) {
@@ -294,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                             recentProjects.add(projects.get(i));
                         }
                         recentProjectAdapter.setProjects(recentProjects);
-                        
+
                         int count = projects.size();
                         binding.tvCountProjects.setText(String.valueOf(count));
                         binding.layoutProfile.tvProfileStatProjects.setText(String.valueOf(count));
@@ -308,10 +350,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         projectSharedViewModel = new ViewModelProvider(this).get(ProjectSharedViewModel.class);
         projectSharedViewModel.getNavigateToTeamRequest().observe(this, shouldNavigate -> {
             if (shouldNavigate != null && shouldNavigate) {
-                // Chuyển sang Tab Đội ngũ (nav_team)
                 binding.bottomNavigation.setSelectedItemId(R.id.nav_team);
 
-                // Mở trực tiếp ProjectDetailFragment
                 ProjectWithRole selected = projectSharedViewModel.getSelectedProject().getValue();
                 if (selected != null) {
                     com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment fragment = com.example.quan_ly_du_an.feature_project.ui.project.ProjectDetailFragment
@@ -358,7 +398,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
     private void prepopulateSampleData() {
         executorService.execute(() -> {
-            // 0. Tạo Admin account
             User adminUser = db.userDao().getUserById(999);
             if (adminUser == null) {
                 adminUser = new User("Quản trị viên", "admin", "123456");
@@ -367,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 db.userDao().insertUser(adminUser);
             }
 
-            // 1. Tạo Nguyen Van B
             User userB = db.userDao().getUserByEmail("b@email.com");
             if (userB == null) {
                 userB = new User("Nguyen Van B", "b@email.com", "123456");
@@ -375,7 +413,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 userB = db.userDao().getUserByEmail("b@email.com");
             }
 
-            // 2. Tạo Member Jerry
             User jerry = db.userDao().getUserByEmail("jerry@gmail.com");
             if (jerry == null) {
                 jerry = new User("Jerry Member", "jerry@gmail.com", "123456");
@@ -383,7 +420,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 db.userDao().insertUser(jerry);
             }
 
-            // 3. Tạo Leader Tom
             User tom = db.userDao().getUserByEmail("tom@gmail.com");
             if (tom == null) {
                 tom = new User("Tom Leader", "tom@gmail.com", "123456");
@@ -391,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 db.userDao().insertUser(tom);
             }
 
-            // 4. Tạo Admin QTV
             User qtv = db.userDao().getUserByEmail("qtv@gmail.com");
             if (qtv == null) {
                 qtv = new User("Quản trị viên (QTV)", "qtv@gmail.com", "123456");
@@ -400,7 +435,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
             }
 
             final User finalUserB = userB;
-            // 2. Tạo Task mẫu
             try (android.database.Cursor cursor = db.query("SELECT COUNT(*) FROM tasks", null)) {
                 if (cursor.moveToFirst() && cursor.getInt(0) == 0) {
                     Task t1 = new Task(0, 1, finalUserB.getId(), "Thiết kế UI cho mobile",
@@ -426,7 +460,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         int userId = sharedPref.getInt("USER_ID", -1);
 
         if (userId == 999) {
-            // Admin: Quan sát toàn bộ công việc của nhân viên trong hệ thống
             db.taskDao().getAllTasks().observe(this, tasks -> {
                 if (tasks != null) {
                     currentFullList = tasks;
@@ -442,7 +475,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                 }
             });
         } else if (userId != -1) {
-            // User thường: Chỉ quan sát công việc được phân công cho cá nhân
             db.taskDao().getAllTasksForUser(userId).observe(this, tasks -> {
                 if (tasks != null) {
                     currentFullList = tasks;
@@ -466,7 +498,15 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                taskAdapter.filter(s.toString());
+                if (userId != -1) {
+                    executorService.execute(() -> {
+                        List<Task> searchResults = db.taskDao().searchTasksForUserSync(userId, s.toString());
+
+                        runOnUiThread(() -> {
+                            taskAdapter.updateData(searchResults);
+                        });
+                    });
+                }
             }
 
             @Override

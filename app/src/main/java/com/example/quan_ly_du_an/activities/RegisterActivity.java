@@ -29,15 +29,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         database = AppDatabase.getDatabase(this);
 
-        // Xử lý nút Đăng ký ngay
         binding.btnRegister.setOnClickListener(v -> handleRegister());
 
-        // Xử lý text Đã có tài khoản -> Quay lại Login
         binding.tvLogin.setOnClickListener(v -> {
-            finish(); // Đóng màn hình đăng ký, tự động quay về màn hình đăng nhập
+            finish();
         });
 
-        // Xử lý các nút MXH (Mô phỏng)
         binding.btnGoogle.setOnClickListener(v -> {
             Toast.makeText(this, "Tính năng đăng ký Google đang phát triển", Toast.LENGTH_SHORT).show();
         });
@@ -53,13 +50,11 @@ public class RegisterActivity extends AppCompatActivity {
         String confirmPassword = binding.etConfirmPassword.getText() != null ? binding.etConfirmPassword.getText().toString().trim() : "";
         String email = binding.etEmail.getText() != null ? binding.etEmail.getText().toString().trim() : "";
 
-        // Reset lỗi hiển thị
         binding.tilUsername.setError(null);
         binding.tilPassword.setError(null);
         binding.tilConfirmPassword.setError(null);
         binding.tilEmail.setError(null);
 
-        // Validation cơ bản
         if (username.isEmpty() || username.length() < 3) {
             binding.tilUsername.setError("Tên đăng nhập phải từ 3 ký tự");
             return;
@@ -77,19 +72,16 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Đẩy xuống Background Thread để thao tác với Database
         executorService.execute(() -> {
             User newUser = new User(username, email, password);
 
             try {
                 database.userDao().insertUser(newUser);
 
-                // Lấy user vừa insert để lấy ID chính xác
                 User createdUser = database.userDao().getUserByEmail(email);
                 int userId = createdUser != null ? createdUser.getId() : newUser.getId();
 
                 runOnUiThread(() -> {
-                    // Lưu phiên đăng nhập tự động
                     SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putBoolean("IS_LOGGED_IN", true);
@@ -98,7 +90,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                     Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Đang chuyển đến màn hình chính...", Toast.LENGTH_SHORT).show();
 
-                    // Chuyển thẳng sang MainActivity và xóa stack trước đó
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

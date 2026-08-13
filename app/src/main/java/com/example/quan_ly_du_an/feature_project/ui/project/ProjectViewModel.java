@@ -36,26 +36,22 @@ public class ProjectViewModel extends AndroidViewModel {
     }
 
     public void addMember(long projectId, String email, String role, Runnable onSuccess) {
-        // 1. Kiểm tra quyền Admin/Leader
         String myRole = getCurrentUserRole(projectId);
         if (!RoleUtils.canManageMembers(myRole)) {
             errorMessage.setValue("Bạn không có quyền thêm thành viên!");
             return;
         }
 
-        // 2. Gọi Repo thực hiện
         repository.addMemberByEmail(projectId, email, role, onSuccess, msg -> errorMessage.postValue(msg));
     }
 
     public void removeMember(long projectId, long userId, Runnable onSuccess) {
-        // 1. Kiểm tra quyền
         String myRole = getCurrentUserRole(projectId);
         if (!RoleUtils.canManageMembers(myRole)) {
             errorMessage.setValue("Bạn không có quyền xóa thành viên!");
             return;
         }
 
-        // 2. Không cho tự xóa chính mình (Logic nghiệp vụ bổ sung)
         if (userId == SessionManager.getCurrentUserId(getApplication())) {
             errorMessage.setValue("Bạn không thể tự xóa mình khỏi dự án!");
             return;

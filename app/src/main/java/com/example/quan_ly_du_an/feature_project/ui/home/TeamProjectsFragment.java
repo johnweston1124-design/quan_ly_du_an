@@ -40,10 +40,8 @@ public class TeamProjectsFragment extends BaseFragment {
         recyclerViewProjects = view.findViewById(R.id.recyclerViewProjects);
         FloatingActionButton fabAddProject = view.findViewById(R.id.fabAddProject);
         
-        // Ẩn nút thêm dự án ở tab Đội ngũ
         fabAddProject.setVisibility(View.GONE);
 
-        // Thay đổi tiêu đề Header cho phù hợp với tab Đội ngũ
         TextView tvHeaderTitle = view.findViewById(R.id.tvHomeHeaderTitle);
         if (tvHeaderTitle != null) {
             tvHeaderTitle.setText("Đội ngũ");
@@ -59,7 +57,6 @@ public class TeamProjectsFragment extends BaseFragment {
 
     private void setupRecyclerView() {
         adapter = new ProjectAdapter(projectWithRole -> {
-            // Khi nhấn vào dự án, mở chi tiết thành viên
             ProjectDetailFragment fragment = ProjectDetailFragment.newInstance(
                     projectWithRole.projectId,
                     projectWithRole.title,
@@ -68,7 +65,7 @@ public class TeamProjectsFragment extends BaseFragment {
             if (getParentFragmentManager() != null) {
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.layoutTeam, fragment)
-                        .addToBackStack(null) // Hỗ trợ nút Back quay lại danh sách
+                        .addToBackStack(null)
                         .commit();
             }
         });
