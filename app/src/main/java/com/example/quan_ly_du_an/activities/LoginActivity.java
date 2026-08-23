@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
         database = AppDatabase.getDatabase(this);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("610134536543-iepm19bs8du5kjjel17ujssfl3guv3j8.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);

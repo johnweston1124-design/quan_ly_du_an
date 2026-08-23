@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -99,26 +100,84 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
         SharedPreferences sharedPref = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
         int userId = sharedPref.getInt("USER_ID", -1);
         if (userId != -1 && db != null) {
-            db.taskDao().getAllTasksForUser(userId).observe(this, tasks -> {
-                if (tasks != null) {
-                    currentFullList = tasks;
-                    if (taskAdapter != null) taskAdapter.updateData(tasks);
-                    if (binding != null && binding.layoutTasks != null) {
-                        if (tasks.isEmpty()) {
-                            binding.layoutTasks.layoutEmpty.setVisibility(View.VISIBLE);
-                            binding.layoutTasks.rvTask.setVisibility(View.GONE);
-                        } else {
-                            binding.layoutTasks.layoutEmpty.setVisibility(View.GONE);
-                            binding.layoutTasks.rvTask.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-            });
+            executorService.execute(() -> {
+                User currentUser = db.userDao().getUserById(userId);
+                boolean isAdmin = (userId == 999) || (currentUser != null && "ADMIN".equalsIgnoreCase(currentUser.getRole()));
 
-            db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
-                if (tasks != null && recentTaskAdapter != null) {
-                    recentTaskAdapter.updateData(tasks);
-                }
+                runOnUiThread(() -> {
+                    LiveData<List<Task>> taskLiveData = isAdmin ? db.taskDao().getAllTasks() : db.taskDao().getAllTasksForUser(userId);
+
+                    taskLiveData.observe(this, tasks -> {
+                        if (tasks != null) {
+                            currentFullList = tasks;
+
+                            if (taskAdapter != null) taskAdapter.updateData(tasks);
+                            if (binding != null && binding.layoutTasks != null) {
+                                if (tasks.isEmpty()) {
+                                    binding.layoutTasks.layoutEmpty.setVisibility(View.VISIBLE);
+                                    binding.layoutTasks.rvTask.setVisibility(View.GONE);
+                                } else {
+                                    binding.layoutTasks.layoutEmpty.setVisibility(View.GONE);
+                                    binding.layoutTasks.rvTask.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            if (recentTaskAdapter != null) {
+                                List<Task> recentTasks = new ArrayList<>();
+                                int limit = Math.min(3, tasks.size());
+                                for (int i = 0; i < limit; i++) {
+                                    recentTasks.add(tasks.get(i));
+                                }
+                                recentTaskAdapter.updateData(recentTasks);
+                            }
+
+                            int total = tasks.size();
+                            int completed = 0;
+                            int pending = 0;
+                            int highPriority = 0;
+
+                            for (Task t : tasks) {
+                                String status = t.getStatus() != null ? t.getStatus().trim() : "";
+                                String priority = t.getPriority() != null ? t.getPriority().trim() : "";
+
+                                if ("Done".equalsIgnoreCase(status) || "Hoàn thành".equalsIgnoreCase(status)) {
+                                    completed++;
+                                } else {
+                                    pending++;
+                                }
+                                if ("Cao".equalsIgnoreCase(priority) || "High".equalsIgnoreCase(priority)) {
+                                    highPriority++;
+                                }
+                            }
+
+                            if (binding != null) {
+                                binding.tvCountTasks.setText(String.valueOf(pending));
+                                binding.tvCountCompletedTasks.setText(String.valueOf(completed));
+                                binding.tvCountHighTasks.setText(String.valueOf(highPriority));
+
+                                if (isAdmin) {
+                                    binding.tvAdminTotalTasks.setText(String.valueOf(total));
+                                    executorService.execute(() -> {
+                                        int totalUsers = db.userDao().getTotalUsersCount();
+                                        int totalProjects = db.projectDao().getTotalProjectsCount();
+                                        runOnUiThread(() -> {
+                                            binding.tvAdminTotalUsers.setText(String.valueOf(totalUsers));
+                                            binding.tvAdminTotalProjects.setText(String.valueOf(totalProjects));
+                                        });
+                                    });
+                                }
+
+                                if (binding.layoutProfile != null && binding.layoutProfile.tvProfileStatTasks != null) {
+                                    binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
+                                }
+
+                                int percent = (total > 0) ? (completed * 100 / total) : 0;
+                                binding.pbOverallProgress.setProgress(percent);
+                                binding.tvProgressPercent.setText(percent + "%");
+                            }
+                        }
+                    });
+                });
             });
         }
     }
@@ -227,18 +286,6 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                         binding.bottomNavigation.setSelectedItemId(R.id.nav_project);
                     });
 
-                    executorService.execute(() -> {
-                        int totalUsers = db.userDao().getTotalUsersCount();
-                        int totalProjects = db.projectDao().getTotalProjectsCount();
-                        int totalTasks = db.taskDao().getTotalTasksCount();
-
-                        runOnUiThread(() -> {
-                            binding.tvAdminTotalUsers.setText(String.valueOf(totalUsers));
-                            binding.tvAdminTotalProjects.setText(String.valueOf(totalProjects));
-                            binding.tvAdminTotalTasks.setText(String.valueOf(totalTasks));
-                        });
-                    });
-
                     db.projectDao().getAllLatestProjectsForAdmin(3).observe(this, projects -> {
                         if (projects != null) {
                             recentProjectAdapter.setProjects(projects);
@@ -251,80 +298,8 @@ public class MainActivity extends AppCompatActivity implements TaskAdapter.OnTas
                             });
                         }
                     });
-
-                    db.taskDao().getLatestTasks(3).observe(this, tasks -> {
-                        if (tasks != null) {
-                            recentTaskAdapter.updateData(tasks);
-                        }
-                    });
-
-                    db.taskDao().getAllTasks().observe(this, allTasks -> {
-                        if (allTasks != null) {
-                            int total = allTasks.size();
-                            int completed = 0;
-                            int pending = 0;
-                            int highPriority = 0;
-
-                            for (Task t : allTasks) {
-                                if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
-                                    completed++;
-                                } else {
-                                    pending++;
-                                }
-                                if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
-                                    highPriority++;
-                                }
-                            }
-
-                            binding.tvCountTasks.setText(String.valueOf(pending));
-                            binding.tvCountCompletedTasks.setText(String.valueOf(completed));
-                            binding.tvCountHighTasks.setText(String.valueOf(highPriority));
-
-                            binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
-
-                            int percent = (total > 0) ? (completed * 100 / total) : 0;
-                            binding.pbOverallProgress.setProgress(percent);
-                            binding.tvProgressPercent.setText(percent + "%");
-                        }
-                    });
                 } else {
                     binding.layoutAdminPanel.setVisibility(View.GONE);
-
-                    db.taskDao().getLatestTasksForUser(userId, 3).observe(this, tasks -> {
-                        if (tasks != null) {
-                            recentTaskAdapter.updateData(tasks);
-                        }
-                    });
-
-                    db.taskDao().getAllTasksForUser(userId).observe(this, allTasks -> {
-                        if (allTasks != null) {
-                            int total = allTasks.size();
-                            int completed = 0;
-                            int pending = 0;
-                            int highPriority = 0;
-
-                            for (Task t : allTasks) {
-                                if ("Done".equalsIgnoreCase(t.getStatus()) || "Hoàn thành".equalsIgnoreCase(t.getStatus())) {
-                                    completed++;
-                                } else {
-                                    pending++;
-                                }
-                                if ("Cao".equalsIgnoreCase(t.getPriority()) || "High".equalsIgnoreCase(t.getPriority())) {
-                                    highPriority++;
-                                }
-                            }
-
-                            binding.tvCountTasks.setText(String.valueOf(pending));
-                            binding.tvCountCompletedTasks.setText(String.valueOf(completed));
-                            binding.tvCountHighTasks.setText(String.valueOf(highPriority));
-
-                            binding.layoutProfile.tvProfileStatTasks.setText(String.valueOf(completed));
-
-                            int percent = (total > 0) ? (completed * 100 / total) : 0;
-                            binding.pbOverallProgress.setProgress(percent);
-                            binding.tvProgressPercent.setText(percent + "%");
-                        }
-                    });
                 }
 
                 com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel homeViewModel = new androidx.lifecycle.ViewModelProvider(this).get(com.example.quan_ly_du_an.feature_project.ui.home.HomeViewModel.class);
